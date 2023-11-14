@@ -8,11 +8,11 @@ const socket = io();
 
 const Chat = () => {
   const [messages, setMessages] = useState();
-  const [newMessage, setNewMessage] = useState();
+  const [newMessage, setNewMessage] = useState("");
   const [modal, setModal] = useState();
-  const [channel, setChannel] = useState({ name: '#general', id: 1});
+  const [channel, setChannel] = useState({ name: "#general", id: 1 });
   const [channels, setChannels] = useState();
-  const [newChannelName, setNewChannelName] = useState();
+  const [newChannelName, setNewChannelName] = useState("");
   const [valid, setValid] = useState();
 
   useEffect(() => {
@@ -25,7 +25,7 @@ const Chat = () => {
         })
         .then((response) => {
           setMessages(response.data.messages);
-          setChannels(response.data.channels)
+          setChannels(response.data.channels);
         });
     };
     requestData();
@@ -36,10 +36,14 @@ const Chat = () => {
       setMessages((messages) => [...messages, payload]);
     });
 
-    socket.on('newChannel', (payload) => {
+    socket.on("newChannel", (payload) => {
       setChannels((channels) => [...channels, payload]);
     });
   }, []);
+
+  const schema = yup.object().shape({
+    channelName: yup.string().required("пустое значение!!!"),
+  });
 
   const loginData = useContext(MyContext);
 
@@ -50,14 +54,29 @@ const Chat = () => {
   function disabledForm(e) {
     e.preventDefault();
 
-    socket.emit("newMessage", {
-      body: newMessage,
-      channelId: channel.id,
-      username: "admin",
-    });
+    schema
+      .validate({ channelName: newChannelName })
+      .catch((errors) => {
+        setValid(false);
+        console.log(errors);
+      })
+      .then(() => {
+        if (newMessage !== "") {
+          setValid(true);
+        }
+      })
+      .then(() => {
+        console.log(valid);
+        if (valid === true) {
+          socket.emit("newMessage", {
+            body: newMessage,
+            channelId: channel.id,
+            username: "admin",
+          });
+        }
+      });
 
     e.target.reset();
-    setNewMessage('')
   }
 
   function formChange(e) {
@@ -65,8 +84,8 @@ const Chat = () => {
   }
 
   function changeChannel(e) {
-    setChannel({name: e.target.textContent, id: e.target.id})
-    console.log(channel)
+    setChannel({ name: e.target.textContent, id: e.target.id });
+    console.log(channel);
   }
 
   function openModal() {
@@ -85,32 +104,34 @@ const Chat = () => {
     socket.emit("newChannel", { name: "new channel" });
   }
 
-  let schema = yup.object().shape({
-    channelName: yup.string().required('пустое значение!!!'),
-  })
-
   function addNewChannel(e) {
     e.preventDefault();
 
     schema
       .validate({ channelName: newChannelName })
       .catch((errors) => {
-      console.log(errors)})
-      .then( )
-
-
-    socket.emit('newChannel', { name: newChannelName });
+        setValid(false);
+        console.log(errors);
+      })
+      .then(() => {
+        console.log(valid);
+        setValid(true);
+      });
 
     e.target.reset();
-    setNewChannelName('');
-    setModal(false);
+
+    if (valid === true) {
+      socket.emit("newChannel", { name: newChannelName });
+      setNewChannelName("");
+      setModal(false);
+    }
   }
 
   function newChannelFormChange(e) {
     setNewChannelName(e.target.value);
   }
 
-  console.log(newChannelName)
+  console.log(newChannelName);
 
   return (
     <div id="chat" className="h-100">
@@ -166,7 +187,7 @@ const Chat = () => {
                         onClick={changeChannel}
                       >
                         <span className="me-1">#</span>
-                         {el.name}
+                        {el.name}
                       </button>
                     </li>
                   ))}
@@ -175,20 +196,21 @@ const Chat = () => {
             <div className="col p-0 h-100">
               <div className="d-flex flex-column h-100">
                 <div className="bg-light mb-4 p-3 shadow-sm small">
-                  <p className="m-0">
-                    {channel && <b>{channel.name}</b>}
-                  </p>
+                  <p className="m-0">{channel && <b>{channel.name}</b>}</p>
                   <span className="text-muted">0 сообщений</span>
                 </div>
                 <div
                   id="messages-box"
                   className="chat-messages overflow-auto px-5"
                 >
-                  {messages && messages.filter((el) => el.channelId == channel.id).map((message) => (
-                      <div key={uniqueId()} className="text-break mb-2" >
+                  {messages &&
+                    messages
+                      .filter((el) => el.channelId == channel.id)
+                      .map((message) => (
+                        <div key={uniqueId()} className="text-break mb-2">
                           <b>{message.username}</b>: {message.body}
-                      </div>
-                       ))}
+                        </div>
+                      ))}
                 </div>
                 <div className="mt-auto px-5 py-3">
                   <form
@@ -235,7 +257,7 @@ const Chat = () => {
           role="dialog"
           aria-modal="true"
           className="fade modal show"
-          tabindex="-1"
+          tabIndex="-1"
           style={{ display: ` ${modal ? "block" : "none"}` }}
         >
           <div className="modal-dialog modal-dialog-centered">
@@ -251,8 +273,7 @@ const Chat = () => {
                 ></button>
               </div>
               <div className="modal-body">
-                <form
-                onSubmit={isValid && addNewChannel}>
+                <form onSubmit={addNewChannel}>
                   <div>
                     <input
                       name="name"
@@ -261,7 +282,7 @@ const Chat = () => {
                       onChange={newChannelFormChange}
                       value={newChannelName}
                     ></input>
-                    <label className="visually-hidden" for="name"></label>
+                    <label className="visually-hidden" htmlFor="name"></label>
                     <div className="invalid-feedback"></div>
                     <div className="d-flex justify-content-end">
                       <button

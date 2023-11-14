@@ -53,6 +53,7 @@ export const Form = () => {
           id="username"
           className="form-control"
           name="nickname"
+          validationSchema={validationSchema}
           value={formik.values.nickname}
           onChange={formik.handleChange}
         ></input>
