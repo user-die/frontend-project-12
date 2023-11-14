@@ -71,7 +71,9 @@ const Chat = () => {
     setNewMessage(e.target.value);
   }
 
-  function changeChannel() {}
+  function changeChannel(e) {
+    setChannel(e.target.innerText)
+  }
 
   function openModal() {
     const body = document.querySelector("body");
@@ -136,11 +138,11 @@ const Chat = () => {
                     <li className="nav-item w-100">
                       <button
                         type="button"
-                        /*className={
-                          active
+                        className={
+                          channel === textContent
                             ? "w-100 rounded-0 text-start btn btn-secondary"
                             : "w-100 rounded-0 text-start btn"
-                        }*/
+                        }
                         onClick={changeChannel}
                       >
                         <span className="me-1">#</span>
