@@ -1,20 +1,19 @@
 import { useContext, useEffect, useState } from "react";
 import { MyContext } from "./MyContext";
 import axios from "axios";
+import * as yup from "yup";
+import uniqueId from "lodash.uniqueid";
 import { io } from "socket.io-client";
 const socket = io();
 
-/*
-1) Функция, добавляющая в message новое сообщение от сокета
-2) Фильтрация и мап канала
-*/
-
 const Chat = () => {
-  const [servData, setServData] = useState();
   const [messages, setMessages] = useState();
   const [newMessage, setNewMessage] = useState();
   const [modal, setModal] = useState();
-  const [channel, setChannel] = useState();
+  const [channel, setChannel] = useState({ name: '#general', id: 1});
+  const [channels, setChannels] = useState();
+  const [newChannelName, setNewChannelName] = useState();
+  const [valid, setValid] = useState();
 
   useEffect(() => {
     const requestData = async () => {
@@ -25,8 +24,8 @@ const Chat = () => {
           },
         })
         .then((response) => {
-          setServData(response.data);
           setMessages(response.data.messages);
+          setChannels(response.data.channels)
         });
     };
     requestData();
@@ -35,21 +34,12 @@ const Chat = () => {
   useEffect(() => {
     socket.on("newMessage", (payload) => {
       setMessages((messages) => [...messages, payload]);
-      console.log(payload);
+    });
+
+    socket.on('newChannel', (payload) => {
+      setChannels((channels) => [...channels, payload]);
     });
   }, []);
-
-  function addMessage() {
-    let result = [];
-    messages.forEach((message) => {
-      result.push(
-        <div className="text-break mb-2">
-          <b> {message.username}</b>: {message.body}
-        </div>
-      );
-    });
-    return result;
-  }
 
   const loginData = useContext(MyContext);
 
@@ -62,9 +52,12 @@ const Chat = () => {
 
     socket.emit("newMessage", {
       body: newMessage,
-      channelId: 1,
+      channelId: channel.id,
       username: "admin",
     });
+
+    e.target.reset();
+    setNewMessage('')
   }
 
   function formChange(e) {
@@ -72,26 +65,52 @@ const Chat = () => {
   }
 
   function changeChannel(e) {
-    setChannel(e.target.innerText)
+    setChannel({name: e.target.textContent, id: e.target.id})
+    console.log(channel)
   }
 
   function openModal() {
     const body = document.querySelector("body");
     body.className = "h-100 bg-light modal-open";
-    //body.style.overflow = "hidden";
     setModal(true);
   }
 
   function closeModal() {
     const body = document.querySelector("body");
     body.className = "h-100 bg-light";
-    //body.style.overflow = "";
     setModal(false);
   }
 
   function createChannel() {
     socket.emit("newChannel", { name: "new channel" });
   }
+
+  let schema = yup.object().shape({
+    channelName: yup.string().required('пустое значение!!!'),
+  })
+
+  function addNewChannel(e) {
+    e.preventDefault();
+
+    schema
+      .validate({ channelName: newChannelName })
+      .catch((errors) => {
+      console.log(errors)})
+      .then( )
+
+
+    socket.emit('newChannel', { name: newChannelName });
+
+    e.target.reset();
+    setNewChannelName('');
+    setModal(false);
+  }
+
+  function newChannelFormChange(e) {
+    setNewChannelName(e.target.value);
+  }
+
+  console.log(newChannelName)
 
   return (
     <div id="chat" className="h-100">
@@ -133,20 +152,21 @@ const Chat = () => {
                 id="channels-box"
                 className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block"
               >
-                {servData &&
-                  servData.channels.map((el) => (
-                    <li className="nav-item w-100">
+                {channels &&
+                  channels.map((el) => (
+                    <li key={uniqueId()} className="nav-item w-100">
                       <button
                         type="button"
+                        id={el.id}
                         className={
-                          channel === textContent
+                          channel.name === `#${el.name}`
                             ? "w-100 rounded-0 text-start btn btn-secondary"
                             : "w-100 rounded-0 text-start btn"
                         }
                         onClick={changeChannel}
                       >
                         <span className="me-1">#</span>
-                        {el.name}
+                         {el.name}
                       </button>
                     </li>
                   ))}
@@ -156,7 +176,7 @@ const Chat = () => {
               <div className="d-flex flex-column h-100">
                 <div className="bg-light mb-4 p-3 shadow-sm small">
                   <p className="m-0">
-                    <b># general</b>
+                    {channel && <b>{channel.name}</b>}
                   </p>
                   <span className="text-muted">0 сообщений</span>
                 </div>
@@ -164,7 +184,11 @@ const Chat = () => {
                   id="messages-box"
                   className="chat-messages overflow-auto px-5"
                 >
-                  {messages && addMessage()}
+                  {messages && messages.filter((el) => el.channelId == channel.id).map((message) => (
+                      <div key={uniqueId()} className="text-break mb-2" >
+                          <b>{message.username}</b>: {message.body}
+                      </div>
+                       ))}
                 </div>
                 <div className="mt-auto px-5 py-3">
                   <form
@@ -227,12 +251,15 @@ const Chat = () => {
                 ></button>
               </div>
               <div className="modal-body">
-                <form>
+                <form
+                onSubmit={isValid && addNewChannel}>
                   <div>
                     <input
                       name="name"
                       id="name"
                       className="mb-2 form-control"
+                      onChange={newChannelFormChange}
+                      value={newChannelName}
                     ></input>
                     <label className="visually-hidden" for="name"></label>
                     <div className="invalid-feedback"></div>
