@@ -8,7 +8,11 @@ export const Form = () => {
   const loginData = useContext(MyContext);
 
   const validationSchema = yup.object().shape({
-    nickname: yup.string().min(3).max(20).required("Введите ник"),
+    nickname: yup
+      .string()
+      .min("Минимум 3 символа")
+      .max(20)
+      .required("Введите ник"),
     password: yup.string().required("Введите пароль"),
   });
 
@@ -19,7 +23,10 @@ export const Form = () => {
       nickname: "",
       password: "",
     },
-    validationSchema,
+    validationSchema: yup.object().shape({
+      nickname: yup.string().min(3).max(20).required("Введите ник"),
+      password: yup.string().required("Введите пароль"),
+    }),
   });
 
   const post = async () => {
@@ -61,6 +68,7 @@ export const Form = () => {
       </div>
       <div className="form-floating mb-4">
         <input
+          type="password"
           placeholder="Пароль"
           id="password"
           className="form-control"
@@ -70,6 +78,12 @@ export const Form = () => {
         ></input>
         <label htmlFor="password">Пароль</label>
       </div>
+      {formik.errors.nickname && (
+        <div className="text-danger">{formik.errors.nickname}</div>
+      )}
+      {formik.errors.password && (
+        <div className="text-danger">{formik.errors.password}</div>
+      )}
       <button className="w-100 mb-3 btn btn-outline-dark">Войти</button>
     </form>
   );

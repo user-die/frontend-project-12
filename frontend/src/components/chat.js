@@ -54,27 +54,13 @@ const Chat = () => {
   function disabledForm(e) {
     e.preventDefault();
 
-    schema
-      .validate({ channelName: newChannelName })
-      .catch((errors) => {
-        setValid(false);
-        console.log(errors);
-      })
-      .then(() => {
-        if (newMessage !== "") {
-          setValid(true);
-        }
-      })
-      .then(() => {
-        console.log(valid);
-        if (valid === true) {
-          socket.emit("newMessage", {
-            body: newMessage,
-            channelId: channel.id,
-            username: "admin",
-          });
-        }
+    if (newMessage !== "") {
+      socket.emit("newMessage", {
+        body: newMessage,
+        channelId: channel.id,
+        username: "admin",
       });
+    }
 
     e.target.reset();
   }
@@ -100,31 +86,14 @@ const Chat = () => {
     setModal(false);
   }
 
-  function createChannel() {
-    socket.emit("newChannel", { name: "new channel" });
-  }
-
   function addNewChannel(e) {
     e.preventDefault();
-
-    schema
-      .validate({ channelName: newChannelName })
-      .catch((errors) => {
-        setValid(false);
-        console.log(errors);
-      })
-      .then(() => {
-        console.log(valid);
-        setValid(true);
-      });
-
-    e.target.reset();
-
-    if (valid === true) {
+    if (newChannelName !== "") {
       socket.emit("newChannel", { name: newChannelName });
-      setNewChannelName("");
-      setModal(false);
+    } else {
+      return false;
     }
+    e.target.reset();
   }
 
   function newChannelFormChange(e) {
@@ -176,19 +145,22 @@ const Chat = () => {
                 {channels &&
                   channels.map((el) => (
                     <li key={uniqueId()} className="nav-item w-100">
-                      <button
-                        type="button"
-                        id={el.id}
-                        className={
-                          channel.name === `#${el.name}`
-                            ? "w-100 rounded-0 text-start btn btn-secondary"
-                            : "w-100 rounded-0 text-start btn"
-                        }
-                        onClick={changeChannel}
-                      >
-                        <span className="me-1">#</span>
-                        {el.name}
-                      </button>
+                      <div className="d-flex dropdown btn-group">
+                        <button
+                          type="button"
+                          id={el.id}
+                          className={
+                            channel.name === `#${el.name}`
+                              ? "w-100 rounded-0 text-start btn btn-secondary"
+                              : "w-100 rounded-0 text-start btn"
+                          }
+                          onClick={changeChannel}
+                        >
+                          <span className="me-1">#</span>
+                          {el.name}
+                        </button>
+                        <button className="flex-grow-0 dropdown-toggle dropdown-toggle-split btn"></button>
+                      </div>
                     </li>
                   ))}
               </ul>
