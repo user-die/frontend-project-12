@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import NotFound from "./components/notFound";
 import Registration from "./components/registration";
 import Switch from "./components/switch";
+import Chat from "./components/chat";
 
 function App() {
   const authorization = {

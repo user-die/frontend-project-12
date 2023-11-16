@@ -3,9 +3,12 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import axios from "axios";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Registration = () => {
   const [err, setErr] = useState();
+
+  const navigate = useNavigate();
 
   const form = useFormik({
     initialValues: {
@@ -22,6 +25,7 @@ const Registration = () => {
         .then((response) => {
           if (response.status == 201) {
             setErr(false);
+            navigate("/");
           }
         })
         .catch((data) => {
@@ -141,13 +145,12 @@ const Registration = () => {
                           {form.errors.confirmPassword}
                         </div>
                       )}
-
-                      {err && (
-                        <div className="invalid-tooltip">
-                          Пользователь с тамим именем уже существует
-                        </div>
-                      )}
                     </div>
+                    {err && (
+                      <div className="text-danger">
+                        Пользователь с тамим именем уже существует
+                      </div>
+                    )}
                     <button
                       type="submit"
                       className="w-100 btn btn-outline-primary"
