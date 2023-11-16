@@ -7,17 +7,6 @@ import { MyContext } from "./MyContext";
 export const Form = () => {
   const loginData = useContext(MyContext);
 
-  const validationSchema = yup.object().shape({
-    nickname: yup
-      .string()
-      .min("Минимум 3 символа")
-      .max(20)
-      .required("Введите ник"),
-    password: yup.string().required("Введите пароль"),
-  });
-
-  let status;
-
   const formik = useFormik({
     initialValues: {
       nickname: "",
@@ -37,8 +26,7 @@ export const Form = () => {
       })
 
       .then((response) => {
-        status = response.status;
-        if (status == 200) {
+        if (response.status == 200) {
           localStorage.setItem("token", response.data.token);
           loginData.setLogin("login");
         }
@@ -60,7 +48,6 @@ export const Form = () => {
           id="username"
           className="form-control"
           name="nickname"
-          validationSchema={validationSchema}
           value={formik.values.nickname}
           onChange={formik.handleChange}
         ></input>

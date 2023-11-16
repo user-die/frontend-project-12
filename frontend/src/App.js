@@ -2,7 +2,7 @@ import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import NotFound from "./components/notFound";
-
+import Registration from "./components/registration";
 import Switch from "./components/switch";
 
 function App() {
@@ -17,6 +17,7 @@ function App() {
       <Routes>
         <Route path="/404" element={<NotFound />} />
         <Route path="/" element={<Switch />} />
+        <Route path="/signup" element={<Registration />} />
       </Routes>
     </BrowserRouter>
   );

@@ -13,7 +13,8 @@ const Chat = () => {
   const [channel, setChannel] = useState({ name: "#general", id: 1 });
   const [channels, setChannels] = useState();
   const [newChannelName, setNewChannelName] = useState("");
-  const [valid, setValid] = useState();
+  const [rename, setRename] = useState(false);
+  const [currentChannel, setCurrentChannel] = useState();
 
   useEffect(() => {
     const requestData = async () => {
@@ -71,7 +72,6 @@ const Chat = () => {
 
   function changeChannel(e) {
     setChannel({ name: e.target.textContent, id: e.target.id });
-    console.log(channel);
   }
 
   function openModal() {
@@ -93,11 +93,44 @@ const Chat = () => {
     } else {
       return false;
     }
+    setModal(false);
     e.target.reset();
   }
 
   function newChannelFormChange(e) {
     setNewChannelName(e.target.value);
+  }
+
+  function dropMenu(event) {
+    if (event.target.nextElementSibling.className === "dropdown-menu") {
+      event.target.nextElementSibling.className = "dropdown-menu show";
+      setCurrentChannel(
+        event.target.parentElement.querySelector("button").textContent
+      );
+    } else {
+      event.target.nextElementSibling.className = "dropdown-menu";
+    }
+  }
+
+  function openRename() {
+    const body = document.querySelector("body");
+    body.className = "h-100 bg-light modal-open";
+    setRename(true);
+  }
+
+  function closeRename() {
+    const body = document.querySelector("body");
+    body.className = "h-100 bg-light";
+    setRename(false);
+  }
+
+  function renameChannel(e) {
+    e.preventDefault();
+  }
+
+  function newNameForChannel(e) {
+    setCurrentChannel(e.target.value);
+    socket.emit("renameChannel", { id: 3, name: currentChannel });
   }
 
   console.log(newChannelName);
@@ -145,7 +178,10 @@ const Chat = () => {
                 {channels &&
                   channels.map((el) => (
                     <li key={uniqueId()} className="nav-item w-100">
-                      <div className="d-flex dropdown btn-group">
+                      <div
+                        className="d-flex dropdown btn-group"
+                        id={`div ${el.id}`}
+                      >
                         <button
                           type="button"
                           id={el.id}
@@ -159,7 +195,46 @@ const Chat = () => {
                           <span className="me-1">#</span>
                           {el.name}
                         </button>
-                        <button className="flex-grow-0 dropdown-toggle dropdown-toggle-split btn"></button>
+                        <button
+                          type="button"
+                          id={`react-aria8247902799-${el.id}`}
+                          aria-expanded="false"
+                          className="flex-grow-0 dropdown-toggle dropdown-toggle-split btn"
+                          onClick={dropMenu}
+                        ></button>
+                        <div
+                          x-placement="bottom-start"
+                          aria-labelledby={`react-aria8247902799-${el.id}`}
+                          className="dropdown-menu"
+                          data-popper-reference-hidden="false"
+                          data-popper-escaped="false"
+                          data-popper-placement="bottom-start"
+                          style={{
+                            position: "absolute",
+                            inset: "0px auto auto 0px",
+                            transform: "translate(-8px, 40px)",
+                          }}
+                        >
+                          <a
+                            data-rr-ui-dropdown-item
+                            className="dropdown-item"
+                            role="button"
+                            tabIndex="0"
+                            href="#"
+                          >
+                            Удалить
+                          </a>
+                          <a
+                            data-rr-ui-dropdown-item
+                            className="dropdown-item"
+                            role="button"
+                            tabIndex="0"
+                            href="#"
+                            onClick={openRename}
+                          >
+                            Переименовать
+                          </a>
+                        </div>
                       </div>
                     </li>
                   ))}
@@ -222,7 +297,7 @@ const Chat = () => {
         </div>
       </div>
 
-      {modal && <div className="fade modal-backdrop show"></div>}
+      {(modal || rename) && <div className="fade modal-backdrop show"></div>}
 
       {modal && (
         <div
@@ -261,6 +336,58 @@ const Chat = () => {
                         type="button"
                         className="me-2 btn btn-secondary"
                         onClick={closeModal}
+                      >
+                        Отменить
+                      </button>
+                      <button type="submit" className="btn btn-primary">
+                        Отправить
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {rename && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fade modal show"
+          tabIndex="-1"
+          style={{ display: ` ${rename ? "block" : "none"}` }}
+        >
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <div className="modal-title h4">Переименовать канал</div>
+                <button
+                  type="button"
+                  aria-label="Close"
+                  data-bs-dismiss="modal"
+                  className="btn btn-close"
+                  onClick={closeRename}
+                ></button>
+              </div>
+              <div className="modal-body">
+                <form onSubmit={renameChannel}>
+                  <div>
+                    <input
+                      name="name"
+                      id="name"
+                      className="mb-2 form-control"
+                      onChange={newNameForChannel}
+                      value={currentChannel}
+                    ></input>
+                    <label className="visually-hidden" htmlFor="name"></label>
+                    <div className="invalid-feedback"></div>
+                    <div className="d-flex justify-content-end">
+                      <button
+                        type="button"
+                        className="me-2 btn btn-secondary"
+                        onClick={closeRename}
                       >
                         Отменить
                       </button>
