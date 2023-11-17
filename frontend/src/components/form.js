@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import * as yup from "yup";
 import { useFormik } from "formik";
 import axios from "axios";
@@ -7,6 +8,8 @@ import { MyContext } from "./MyContext";
 export const Form = () => {
   const [error401, setError401] = useState();
   const loginData = useContext(MyContext);
+
+  const { t } = useTranslation();
 
   const formik = useFormik({
     initialValues: {
@@ -45,10 +48,10 @@ export const Form = () => {
       className="col-12 col-md-6 mt-3 mt-mb-0"
       onSubmit={formik.handleSubmit}
     >
-      <h1 className="text-center mb-4">Войти</h1>
+      <h1 className="text-center mb-4">{t("login")}</h1>
       <div className="form-floating mb-3">
         <input
-          placeholder="Ваш ник"
+          placeholder={t("yourNick")}
           id="username"
           className={
             formik.errors.nickname ? "form-control is-invalid" : "form-control"
@@ -57,12 +60,12 @@ export const Form = () => {
           value={formik.values.nickname}
           onChange={formik.handleChange}
         ></input>
-        <label htmlFor="username">Ваш ник</label>
+        <label htmlFor="username">{t("yourNick")}</label>
       </div>
       <div className="form-floating mb-4">
         <input
           type="password"
-          placeholder="Пароль"
+          placeholder={t("password")}
           id="password"
           className={
             formik.errors.password ? "form-control is-invalid" : "form-control"
@@ -71,7 +74,7 @@ export const Form = () => {
           value={formik.values.password}
           onChange={formik.handleChange}
         ></input>
-        <label htmlFor="password">Пароль</label>
+        <label htmlFor="password">{t("password")}</label>
         {error401 && (
           <div className="text-danger">
             Неверное имя пользователя или пароль
@@ -84,7 +87,7 @@ export const Form = () => {
       {formik.errors.password && (
         <div className="text-danger">{formik.errors.password}</div>
       )}
-      <button className="w-100 mb-3 btn btn-outline-dark">Войти</button>
+      <button className="w-100 mb-3 btn btn-outline-dark">{t("login")}</button>
     </form>
   );
 };

@@ -1,0 +1,28 @@
+{
+  "login": "войти",
+  "yourNick": "your nickname",
+  "password": "password",
+  "no account?": "don't you have account?",
+  "registration": "registration",
+
+  "username": "username",
+  "confirmPassword": "confirm password",
+  "signup": "signup",
+
+  "log out": "log out",
+  "channels": "channels",
+  "messages": "messages",
+  "enter a message": "enter a message",
+  "add сhannel": "add сhannel",
+  "cancel": "cancel",
+  "submit": "submit",
+  "rename": "rename",
+  "rename сhannel": "rename сhannel",
+  "remove": "remove",
+  "remove channel": "remove channel",
+  "sure?": "sure?",
+
+  "page not found": "page not found",
+  "But you can go": "But you can go",
+  "the main page": "the main page"
+}

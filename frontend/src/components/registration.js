@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import logo from "./images/avatar.jpg";
 import { useFormik } from "formik";
 import * as yup from "yup";
@@ -7,6 +8,8 @@ import { useNavigate } from "react-router-dom";
 
 const Registration = () => {
   const [err, setErr] = useState();
+
+  const { t, i18n } = useTranslation();
 
   const navigate = useNavigate();
 
@@ -76,10 +79,10 @@ const Registration = () => {
                     <img src={logo} className="rounded-circle" />
                   </div>
                   <form className="w-50" onSubmit={form.handleSubmit}>
-                    <h1 className="text-center mb-4">Регистрация</h1>
+                    <h1 className="text-center mb-4">{t("registration")}</h1>
                     <div className="form-floating mb-3">
                       <input
-                        placeholder="Имя пользователя"
+                        placeholder={t("username")}
                         autoComplete="username"
                         required
                         className={
@@ -92,7 +95,7 @@ const Registration = () => {
                         onChange={form.handleChange}
                       />
                       <label className="form-label" htmlFor="username">
-                        Имя пользователя
+                        {t("username")}
                       </label>
                       {form.errors.username && (
                         <div className="invalid-tooltip">
@@ -102,7 +105,7 @@ const Registration = () => {
                     </div>
                     <div className="form-floating mb-3">
                       <input
-                        placeholder="Пароль"
+                        placeholder={t("password")}
                         required
                         autoComplete="password"
                         className={
@@ -115,7 +118,7 @@ const Registration = () => {
                         onChange={form.handleChange}
                       />
                       <label className="form-label" htmlFor="password">
-                        Пароль
+                        {t("password")}
                       </label>
                       {form.errors.password && (
                         <div className="invalid-tooltip">
@@ -125,7 +128,7 @@ const Registration = () => {
                     </div>
                     <div className="form-floating mb-4">
                       <input
-                        placeholder="Подтвердите пароль"
+                        placeholder={t("confirmPassword")}
                         required
                         autoComplete="confirmPassword"
                         className={
@@ -138,7 +141,7 @@ const Registration = () => {
                         onChange={form.handleChange}
                       />
                       <label className="form-label" htmlFor="confirmPassword">
-                        Подтвердите пароль
+                        {t("confirmPassword")}
                       </label>
                       {form.errors.confirmPassword && (
                         <div className="invalid-tooltip">
@@ -155,7 +158,7 @@ const Registration = () => {
                       type="submit"
                       className="w-100 btn btn-outline-primary"
                     >
-                      Зарегистрироваться
+                      {t("sign up")}
                     </button>
                   </form>
                 </div>

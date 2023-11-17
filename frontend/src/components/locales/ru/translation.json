@@ -1,0 +1,30 @@
+{
+  "login": "войти",
+  "yourNick": "ваш ник",
+  "password": "пароль",
+  "no account?": "нет аккаунта?",
+  "registration": "регистрация",
+
+  "username": "имя пользователя",
+  "confirmPassword": "подтвердите пароль",
+  "signup": "зарегистрироваться",
+
+  "log out": "выйти",
+  "channels": "каналы",
+  "messages": "сообщений",
+  "enter a message": "введите сообщение",
+  "add сhannel": "добавить канал",
+  "cancel": "отменить",
+  "submit": "отправить",
+  "rename": "переименовать",
+  "rename сhannel": "переименовать канал",
+  "remove": "удалить",
+  "remove channel": "удалить канал",
+  "sure?": "уверены?",
+
+  "page not found": "Страница не найдена",
+  "But you can go": "Но вы можете перейти",
+  "the main page": "на главную страницу",
+
+  "errors": {}
+}

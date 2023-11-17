@@ -1,8 +1,10 @@
-import { useState } from "react";
 import { Form } from "./form";
 import logo from "./images/im1.jpeg";
+import { useTranslation } from "react-i18next";
 
 const Login = () => {
+  const { t } = useTranslation();
+
   return (
     <section className="h-100">
       <nav className="shadow-sm navbar navbar-expand-lg navbar-light bg-white">
@@ -24,8 +26,8 @@ const Login = () => {
               </div>
               <div className="card-footer p-4">
                 <div className="text-center">
-                  <span className="me-1">Нет аккаунта?</span>
-                  <a href="/signup">Регистрация</a>
+                  <span className="me-1">{t("no account?")}</span>
+                  <a href="/signup">{t("registration")}</a>
                 </div>
               </div>
             </div>

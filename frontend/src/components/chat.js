@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { MyContext } from "./MyContext";
 import axios from "axios";
 import * as yup from "yup";
+import { useFormik } from "formik";
 import uniqueId from "lodash.uniqueid";
 import { io } from "socket.io-client";
 const socket = io();
@@ -44,6 +45,21 @@ const Chat = () => {
 
   const schema = yup.object().shape({
     channelName: yup.string().required("пустое значение!!!"),
+  });
+
+  const formick = useFormik({
+    initialValues: {
+      message: "",
+      channelName: "",
+    },
+
+    validationSchema: yup.object().shape({
+      message: yup.string().required("Введите ник"),
+      channelName: yup
+        .string()
+        .min(3, "Минимум 3 символа")
+        .required("Введите пароль"),
+    }),
   });
 
   const loginData = useContext(MyContext);
@@ -326,8 +342,8 @@ const Chat = () => {
                       name="name"
                       id="name"
                       className="mb-2 form-control"
-                      onChange={newChannelFormChange}
-                      value={newChannelName}
+                      onChange={formick.handleChange}
+                      value={formick.values.channelName}
                     ></input>
                     <label className="visually-hidden" htmlFor="name"></label>
                     <div className="invalid-feedback"></div>
