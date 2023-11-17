@@ -158,7 +158,7 @@ const Registration = () => {
                       type="submit"
                       className="w-100 btn btn-outline-primary"
                     >
-                      {t("sign up")}
+                      {t("signup")}
                     </button>
                   </form>
                 </div>
