@@ -38,8 +38,8 @@ export const Form = () => {
         });
     },
     validationSchema: yup.object().shape({
-      nickname: yup.string().required("Введите ник"),
-      password: yup.string().required("Введите пароль"),
+      nickname: yup.string().required(t("required nickname")),
+      password: yup.string().required(t("required password")),
     }),
   });
 
@@ -75,11 +75,7 @@ export const Form = () => {
           onChange={formik.handleChange}
         ></input>
         <label htmlFor="password">{t("password")}</label>
-        {error401 && (
-          <div className="text-danger">
-            Неверное имя пользователя или пароль
-          </div>
-        )}
+        {error401 && <div className="text-danger">{t("invalid")}</div>}
       </div>
       {formik.errors.nickname && (
         <div className="text-danger">{formik.errors.nickname}</div>

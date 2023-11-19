@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 const Registration = () => {
   const [err, setErr] = useState();
 
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   const navigate = useNavigate();
 
@@ -39,22 +39,19 @@ const Registration = () => {
     validationSchema: yup.object().shape({
       username: yup
         .string()
-        .min(3, "не менее 3 символов")
-        .max(20, "не более 20 символов")
-        .required("От 3 до 20 символов"),
+        .min(3, t("min3Username"))
+        .max(20, t("max20Username"))
+        .required(t("required nickname")),
       password: yup
         .string()
-        .min(6, "не менее 6 символов")
-        .max(20, "не более 20 символов")
-        .matches(
-          /(?:[а-яёa-z]\d|\d[в-яёa-z])/i,
-          "Пароль должен состоять из латинских символов или кириллицы и содержать цифры"
-        )
-        .required("Обязательное поле"),
+        .min(6, t("min6Password"))
+        .max(20, t("max20Password"))
+        .matches(/(?:[а-яёa-z]\d|\d[в-яёa-z])/i, t("consist"))
+        .required(t("required password")),
       confirmPassword: yup
         .string()
-        .oneOf([yup.ref("password")], "Пароли должны совпадать")
-        .required(),
+        .oneOf([yup.ref("password")], t("match"))
+        .required(t("confirmPassword")),
     }),
   });
 
@@ -149,11 +146,7 @@ const Registration = () => {
                         </div>
                       )}
                     </div>
-                    {err && (
-                      <div className="text-danger">
-                        Пользователь с тамим именем уже существует
-                      </div>
-                    )}
+                    {err && <div className="text-danger">{t("already")}</div>}
                     <button
                       type="submit"
                       className="w-100 btn btn-outline-primary"

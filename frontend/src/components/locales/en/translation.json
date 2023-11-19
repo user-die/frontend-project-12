@@ -12,7 +12,7 @@
   "log out": "log out",
   "channels": "channels",
   "messages": "messages",
-  "enter a message": "enter a message",
+  "enter a message": "enter a message...",
   "add сhannel": "add сhannel",
   "cancel": "cancel",
   "submit": "submit",
@@ -24,5 +24,16 @@
 
   "page not found": "page not found",
   "But you can go": "But you can go",
-  "the main page": "the main page"
+  "the main page": "the main page",
+
+  "required nickname": "nickname is a required field",
+  "required password": "password is a required field",
+  "invalid": "invalid nickname or password",
+  "min3Username": "username must be at least 3 characters",
+  "max20Username": "username must be at most 20 characters",
+  "min6Password": "password must be at least 6 characters",
+  "max20Password": "password must be at most 20 characters",
+  "match": "passwords must match",
+  "consist": "The password must consist of Latin or Cyrillic characters and contain numbers",
+  "already": "A user with the same name already exists"
 }
