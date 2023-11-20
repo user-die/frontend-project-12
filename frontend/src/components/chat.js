@@ -10,13 +10,13 @@ const socket = io();
 
 const Chat = () => {
   const [messages, setMessages] = useState();
-  const [newMessage, setNewMessage] = useState("");
   const [modal, setModal] = useState();
   const [channel, setChannel] = useState({ name: "#general", id: 1 });
   const [channels, setChannels] = useState();
-  const [newChannelName, setNewChannelName] = useState("");
   const [rename, setRename] = useState(false);
   const [currentChannel, setCurrentChannel] = useState();
+  const [remove, setRemove] = useState();
+  const [id, setId] = useState();
 
   const { t } = useTranslation();
 
@@ -31,10 +31,17 @@ const Chat = () => {
         .then((response) => {
           setMessages(response.data.messages);
           setChannels(response.data.channels);
+          console.log(response.data);
         });
     };
     requestData();
   }, []);
+
+  function del(id) {
+    setChannels((channels) => channels.filter((el) => el.id !== id));
+
+    setChannel({ name: "#general", id: 1 });
+  }
 
   useEffect(() => {
     socket.on("newMessage", (payload) => {
@@ -44,20 +51,45 @@ const Chat = () => {
     socket.on("newChannel", (payload) => {
       setChannels((channels) => [...channels, payload]);
     });
+
+    socket.on("removeChannel", (payload) => {
+      del(payload.id, channels);
+    });
+
+    //return () => socket.removeAllListeners();
   }, []);
 
-  const schema = yup.object().shape({
-    channelName: yup.string().required("пустое значение!!!"),
-  });
-
-  const formick = useFormik({
+  const formikForMessage = useFormik({
     initialValues: {
       message: "",
+    },
+    onSubmit: (values, { resetForm }) => {
+      if (values.message !== "") {
+        socket.emit("newMessage", {
+          body: values.message,
+          channelId: channel.id,
+          username: "admin",
+        });
+        resetForm();
+      }
+    },
+    validationSchema: yup.object().shape({
+      message: yup.string().required("введите сообщение"),
+    }),
+  });
+
+  const formikForChannel = useFormik({
+    initialValues: {
       channelName: "",
     },
-
+    onSubmit: (values, { resetForm }) => {
+      if (values.channelName !== "") {
+        socket.emit("newChannel", { name: values.channelName });
+        setModal(false);
+        resetForm();
+      }
+    },
     validationSchema: yup.object().shape({
-      message: yup.string().required("Введите ник"),
       channelName: yup
         .string()
         .min(3, "Минимум 3 символа")
@@ -65,59 +97,29 @@ const Chat = () => {
     }),
   });
 
+  const map = channels.map((el) => el.name);
+  console.log(map.find("general"));
+
   const loginData = useContext(MyContext);
 
   function quite() {
     loginData.setLogin("notLogin");
   }
 
-  function disabledForm(e) {
-    e.preventDefault();
-
-    if (newMessage !== "") {
-      socket.emit("newMessage", {
-        body: newMessage,
-        channelId: channel.id,
-        username: "admin",
-      });
-    }
-
-    e.target.reset();
-  }
-
-  function formChange(e) {
-    setNewMessage(e.target.value);
-  }
-
   function changeChannel(e) {
     setChannel({ name: e.target.textContent, id: e.target.id });
   }
 
-  function openModal() {
+  function openAddChannel() {
     const body = document.querySelector("body");
     body.className = "h-100 bg-light modal-open";
     setModal(true);
   }
 
-  function closeModal() {
+  function closeAddChannel() {
     const body = document.querySelector("body");
     body.className = "h-100 bg-light";
     setModal(false);
-  }
-
-  function addNewChannel(e) {
-    e.preventDefault();
-    if (newChannelName !== "") {
-      socket.emit("newChannel", { name: newChannelName });
-    } else {
-      return false;
-    }
-    setModal(false);
-    e.target.reset();
-  }
-
-  function newChannelFormChange(e) {
-    setNewChannelName(e.target.value);
   }
 
   function dropMenu(event) {
@@ -152,7 +154,23 @@ const Chat = () => {
     socket.emit("renameChannel", { id: 3, name: currentChannel });
   }
 
-  console.log(newChannelName);
+  function removeChannel(id) {
+    socket.emit("removeChannel", { id: id });
+    setRemove(false);
+  }
+
+  function openRemove(id) {
+    const body = document.querySelector("body");
+    body.className = "h-100 bg-light modal-open";
+    setId(id);
+    setRemove(true);
+  }
+
+  function closeRemove() {
+    const body = document.querySelector("body");
+    body.className = "h-100 bg-light";
+    setRemove(false);
+  }
 
   return (
     <div id="chat" className="h-100">
@@ -175,7 +193,7 @@ const Chat = () => {
                 <button
                   type="button"
                   className="p-0 text-primary btn btn-group-vertical"
-                  onClick={openModal}
+                  onClick={openAddChannel}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -214,13 +232,15 @@ const Chat = () => {
                           <span className="me-1">#</span>
                           {el.name}
                         </button>
-                        <button
-                          type="button"
-                          id={`react-aria8247902799-${el.id}`}
-                          aria-expanded="false"
-                          className="flex-grow-0 dropdown-toggle dropdown-toggle-split btn"
-                          onClick={dropMenu}
-                        ></button>
+                        {el.removable && (
+                          <button
+                            type="button"
+                            id={`react-aria8247902799-${el.id}`}
+                            aria-expanded="false"
+                            className="flex-grow-0 dropdown-toggle dropdown-toggle-split btn"
+                            onClick={dropMenu}
+                          ></button>
+                        )}
                         <div
                           x-placement="bottom-start"
                           aria-labelledby={`react-aria8247902799-${el.id}`}
@@ -239,7 +259,9 @@ const Chat = () => {
                             className="dropdown-item"
                             role="button"
                             tabIndex="0"
+                            id={el.id}
                             href="#"
+                            onClick={() => openRemove(el.id)}
                           >
                             {t("remove")}
                           </a>
@@ -281,16 +303,16 @@ const Chat = () => {
                 <div className="mt-auto px-5 py-3">
                   <form
                     className="py-1 border rounded-2"
-                    onSubmit={disabledForm}
+                    onSubmit={formikForMessage.handleSubmit}
                   >
                     <div className="input-group has-validation">
                       <input
-                        name="body"
+                        name="message"
                         aria-label="Новое сообщение"
                         placeholder={t("enter a message")}
                         className="border-0 p-0 ps-2 form-control"
-                        onChange={formChange}
-                        value={newMessage}
+                        value={formikForMessage.values.message}
+                        onChange={formikForMessage.handleChange}
                       ></input>
                       <button type="submit" className="btn btn-group-vertical">
                         <svg
@@ -316,7 +338,9 @@ const Chat = () => {
         </div>
       </div>
 
-      {(modal || rename) && <div className="fade modal-backdrop show"></div>}
+      {(modal || rename || remove) && (
+        <div className="fade modal-backdrop show"></div>
+      )}
 
       {modal && (
         <div
@@ -335,18 +359,18 @@ const Chat = () => {
                   aria-label="Close"
                   data-bs-dismiss="modal"
                   className="btn btn-close"
-                  onClick={closeModal}
+                  onClick={closeAddChannel}
                 ></button>
               </div>
               <div className="modal-body">
-                <form onSubmit={addNewChannel}>
+                <form onSubmit={formikForChannel.handleSubmit}>
                   <div>
                     <input
-                      name="name"
+                      name="channelName"
                       id="name"
                       className="mb-2 form-control"
-                      onChange={formick.handleChange}
-                      value={formick.values.channelName}
+                      onChange={formikForChannel.handleChange}
+                      value={formikForChannel.values.channelName}
                     ></input>
                     <label className="visually-hidden" htmlFor="name"></label>
                     <div className="invalid-feedback"></div>
@@ -354,7 +378,7 @@ const Chat = () => {
                       <button
                         type="button"
                         className="me-2 btn btn-secondary"
-                        onClick={closeModal}
+                        onClick={closeAddChannel}
                       >
                         {t("cancel")}
                       </button>
@@ -416,6 +440,50 @@ const Chat = () => {
                     </div>
                   </div>
                 </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {remove && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fade modal show"
+          tabIndex="-1"
+          style={{ display: ` ${remove ? "block" : "none"}` }}
+        >
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <div className="modal-title h4">{t("remove channel")}</div>
+                <button
+                  type="button"
+                  aria-label="Close"
+                  data-bs-dismiss="modal"
+                  className="btn btn-close"
+                  onClick={closeRemove}
+                ></button>
+              </div>
+              <div className="modal-body">
+                <p className="lead">{t("sure?")}</p>
+                <div className="d-flex justify-content-end">
+                  <button
+                    type="button"
+                    className="me-2 btn btn-secondary"
+                    onClick={closeRemove}
+                  >
+                    {t("cancel")}
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-danger"
+                    onClick={() => removeChannel(id)}
+                  >
+                    {t("remove")}
+                  </button>
+                </div>
               </div>
             </div>
           </div>

@@ -6,7 +6,7 @@ import en from "./locales/en/translation";
 
 i18next.use(initReactI18next).init({
   debug: true,
-  lng: "en",
+  lng: "ru",
   resources: {
     en: {
       translation: en,
