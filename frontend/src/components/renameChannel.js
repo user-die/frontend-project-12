@@ -1,20 +1,30 @@
+import { useFormik } from "formik";
+import * as yup from "yup";
+import { useTranslation } from "react-i18next";
+import { io } from "socket.io-client";
+const socket = io();
+
 const RenameChannel = (props) => {
+  const { t } = useTranslation();
+
   const formikForRenameChannel = useFormik({
     initialValues: {
       channelName: "", //document.getElementById(id).textContent,
     },
     onSubmit: (values, { resetForm }) => {
-      if (values.channelName !== "") {
-        socket.emit("renameChannel", { id: id, name: values.channelName });
-        setRename(false);
-        resetForm();
-      }
+      socket.emit("renameChannel", { id: props.id, name: values.channelName });
+      props.closeRename();
+      resetForm();
     },
     validationSchema: yup.object().shape({
       channelName: yup
         .string()
         .min(3, "Минимум 3 символа")
-        .required("Введите пароль"),
+        .required("Введите пароль")
+        .notOneOf(
+          props.channels.map((el) => el.name),
+          "Такой канал уже существует"
+        ),
     }),
   });
 
@@ -24,7 +34,7 @@ const RenameChannel = (props) => {
       aria-modal="true"
       className="fade modal show"
       tabIndex="-1"
-      style={{ display: ` ${rename ? "block" : "none"}` }}
+      style={{ display: ` ${props.rename ? "block" : "none"}` }}
     >
       <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content">
@@ -35,7 +45,7 @@ const RenameChannel = (props) => {
               aria-label="Close"
               data-bs-dismiss="modal"
               className="btn btn-close"
-              onClick={closeRename}
+              onClick={props.closeRename}
             ></button>
           </div>
           <div className="modal-body">
@@ -49,12 +59,16 @@ const RenameChannel = (props) => {
                   value={formikForRenameChannel.values.channelName}
                 ></input>
                 <label className="visually-hidden" htmlFor="name"></label>
-                <div className="invalid-feedback"></div>
+                {formikForRenameChannel.errors.channelName && (
+                  <div className="text-danger">
+                    {formikForRenameChannel.errors.channelName}
+                  </div>
+                )}
                 <div className="d-flex justify-content-end">
                   <button
                     type="button"
                     className="me-2 btn btn-secondary"
-                    onClick={closeRename}
+                    onClick={props.closeRename}
                   >
                     {t("cancel")}
                   </button>

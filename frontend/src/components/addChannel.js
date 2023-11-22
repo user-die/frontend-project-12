@@ -12,17 +12,24 @@ const AddChannel = (props) => {
       channelName: "",
     },
     onSubmit: (values, { resetForm }) => {
-      if (values.channelName !== "") {
-        socket.emit("newChannel", { name: values.channelName });
-        setModal(false);
-        resetForm();
-      }
+      socket.emit("newChannel", { name: values.channelName });
+      props.closeAddChannel();
+      resetForm();
+
+      props.setChannel({
+        name: values.channelName,
+        id: props.channels.filter((el) => el.name == values.channelName),
+      });
     },
     validationSchema: yup.object().shape({
       channelName: yup
         .string()
         .min(3, "Минимум 3 символа")
-        .required("Введите пароль"),
+        .required("Введите название канала")
+        .notOneOf(
+          props.channels.map((el) => el.name),
+          "Такой канал уже существует"
+        ),
     }),
   });
 
@@ -32,7 +39,7 @@ const AddChannel = (props) => {
       aria-modal="true"
       className="fade modal show"
       tabIndex="-1"
-      style={{ display: ` ${modal ? "block" : "none"}` }}
+      style={{ display: ` ${props.modal ? "block" : "none"}` }}
     >
       <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content">
@@ -43,7 +50,7 @@ const AddChannel = (props) => {
               aria-label="Close"
               data-bs-dismiss="modal"
               className="btn btn-close"
-              onClick={closeAddChannel}
+              onClick={props.closeAddChannel}
             ></button>
           </div>
           <div className="modal-body">
@@ -66,7 +73,7 @@ const AddChannel = (props) => {
                   <button
                     type="button"
                     className="me-2 btn btn-secondary"
-                    onClick={closeAddChannel}
+                    onClick={props.closeAddChannel}
                   >
                     {t("cancel")}
                   </button>

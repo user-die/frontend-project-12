@@ -1,3 +1,7 @@
+import AddChannel from "./addChannel";
+import RenameChannel from "./renameChannel";
+import RemoveChannel from "./removeChannel";
+
 import { useTranslation } from "react-i18next";
 import { useContext, useEffect, useState } from "react";
 import { MyContext } from "./MyContext";
@@ -8,14 +12,13 @@ import uniqueId from "lodash.uniqueid";
 import { io } from "socket.io-client";
 const socket = io();
 
-//Имена каналов не должны повторяться
-//Создатель канала должен быть перемещён в добавленный канал
-//переименование канала (внутри модального окна). Имена каналов не должны повторяться
+//Переименование
+//Открытие дроп-окна по одному щелчку
 
 const Chat = () => {
   const [messages, setMessages] = useState();
   const [modal, setModal] = useState();
-  const [channel, setChannel] = useState({ name: "#general", id: 1 });
+  const [channel, setChannel] = useState({ name: "general", id: 1 });
   const [channels, setChannels] = useState();
   const [rename, setRename] = useState(false);
   const [currentChannel, setCurrentChannel] = useState();
@@ -43,7 +46,7 @@ const Chat = () => {
   function del(id) {
     setChannels((channels) => channels.filter((el) => el.id !== id));
 
-    setChannel({ name: "#general", id: 1 });
+    setChannel({ name: "general", id: 1 });
   }
 
   useEffect(() => {
@@ -61,6 +64,13 @@ const Chat = () => {
 
     socket.on("renameChannel", (payload) => {
       console.log(payload);
+      setChannels((channels) =>
+        channels.splice(
+          channels.indexOf(channels.filter((el) => el.id == payload.id)[0]),
+          999,
+          payload
+        )
+      );
     });
 
     //return () => socket.removeAllListeners();
@@ -85,48 +95,6 @@ const Chat = () => {
     }),
   });
 
-  let channelsName = document.querySelectorAll(".text-start");
-
-  console.log();
-
-  const formikForChannel = useFormik({
-    initialValues: {
-      channelName: "",
-    },
-    onSubmit: (values, { resetForm }) => {
-      if (values.channelName !== "") {
-        socket.emit("newChannel", { name: values.channelName });
-        setModal(false);
-        resetForm();
-      }
-    },
-    validationSchema: yup.object().shape({
-      channelName: yup
-        .string()
-        .min(3, "Минимум 3 символа")
-        .required("Введите пароль"),
-    }),
-  });
-
-  const formikForRenameChannel = useFormik({
-    initialValues: {
-      channelName: "", //document.getElementById(id).textContent,
-    },
-    onSubmit: (values, { resetForm }) => {
-      if (values.channelName !== "") {
-        socket.emit("renameChannel", { id: id, name: values.channelName });
-        setRename(false);
-        resetForm();
-      }
-    },
-    validationSchema: yup.object().shape({
-      channelName: yup
-        .string()
-        .min(3, "Минимум 3 символа")
-        .required("Введите пароль"),
-    }),
-  });
-
   const loginData = useContext(MyContext);
 
   function quite() {
@@ -134,7 +102,10 @@ const Chat = () => {
   }
 
   function changeChannel(e) {
-    setChannel({ name: e.target.textContent, id: e.target.id });
+    setChannel({
+      name: e.target.textContent.replace("#", ""),
+      id: e.target.id,
+    });
   }
 
   function openAddChannel() {
@@ -171,11 +142,6 @@ const Chat = () => {
     const body = document.querySelector("body");
     body.className = "h-100 bg-light";
     setRename(false);
-  }
-
-  function removeChannel(id) {
-    socket.emit("removeChannel", { id: id });
-    setRemove(false);
   }
 
   function openRemove(id) {
@@ -242,7 +208,7 @@ const Chat = () => {
                           type="button"
                           id={el.id}
                           className={
-                            channel.name === `#${el.name}`
+                            channel.name === `${el.name}`
                               ? "w-100 rounded-0 text-start btn btn-secondary"
                               : "w-100 rounded-0 text-start btn"
                           }
@@ -360,156 +326,32 @@ const Chat = () => {
       {(modal || rename || remove) && (
         <div className="fade modal-backdrop show"></div>
       )}
+
       {modal && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          className="fade modal show"
-          tabIndex="-1"
-          style={{ display: ` ${modal ? "block" : "none"}` }}
-        >
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="modal-header">
-                <div className="modal-title h4">{t("add сhannel")}</div>
-                <button
-                  type="button"
-                  aria-label="Close"
-                  data-bs-dismiss="modal"
-                  className="btn btn-close"
-                  onClick={closeAddChannel}
-                ></button>
-              </div>
-              <div className="modal-body">
-                <form onSubmit={formikForChannel.handleSubmit}>
-                  <div>
-                    <input
-                      name="channelName"
-                      id="name"
-                      className="mb-2 form-control"
-                      onChange={formikForChannel.handleChange}
-                      value={formikForChannel.values.channelName}
-                    ></input>
-                    <label className="visually-hidden" htmlFor="name"></label>
-                    {formikForChannel.errors.channelName && (
-                      <div className="text-danger">
-                        {formikForChannel.errors.channelName}
-                      </div>
-                    )}
-                    <div className="d-flex justify-content-end">
-                      <button
-                        type="button"
-                        className="me-2 btn btn-secondary"
-                        onClick={closeAddChannel}
-                      >
-                        {t("cancel")}
-                      </button>
-                      <button type="submit" className="btn btn-primary">
-                        {t("submit")}
-                      </button>
-                    </div>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
+        <AddChannel
+          modal={modal}
+          channels={channels}
+          closeAddChannel={closeAddChannel}
+          setChannel={setChannel}
+        />
       )}
 
       {rename && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          className="fade modal show"
-          tabIndex="-1"
-          style={{ display: ` ${rename ? "block" : "none"}` }}
-        >
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="modal-header">
-                <div className="modal-title h4">{t("rename сhannel")}</div>
-                <button
-                  type="button"
-                  aria-label="Close"
-                  data-bs-dismiss="modal"
-                  className="btn btn-close"
-                  onClick={closeRename}
-                ></button>
-              </div>
-              <div className="modal-body">
-                <form onSubmit={formikForRenameChannel.handleSubmit}>
-                  <div>
-                    <input
-                      name="channelName"
-                      id="name"
-                      className="mb-2 form-control"
-                      onChange={formikForRenameChannel.handleChange}
-                      value={formikForRenameChannel.values.channelName}
-                    ></input>
-                    <label className="visually-hidden" htmlFor="name"></label>
-                    <div className="invalid-feedback"></div>
-                    <div className="d-flex justify-content-end">
-                      <button
-                        type="button"
-                        className="me-2 btn btn-secondary"
-                        onClick={closeRename}
-                      >
-                        {t("cancel")}
-                      </button>
-                      <button type="submit" className="btn btn-primary">
-                        {t("submit")}
-                      </button>
-                    </div>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
+        <RenameChannel
+          id={id}
+          rename={rename}
+          channels={channels}
+          closeRename={closeRename}
+        />
       )}
 
       {remove && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          className="fade modal show"
-          tabIndex="-1"
-          style={{ display: ` ${remove ? "block" : "none"}` }}
-        >
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="modal-header">
-                <div className="modal-title h4">{t("remove channel")}</div>
-                <button
-                  type="button"
-                  aria-label="Close"
-                  data-bs-dismiss="modal"
-                  className="btn btn-close"
-                  onClick={closeRemove}
-                ></button>
-              </div>
-              <div className="modal-body">
-                <p className="lead">{t("sure?")}</p>
-                <div className="d-flex justify-content-end">
-                  <button
-                    type="button"
-                    className="me-2 btn btn-secondary"
-                    onClick={closeRemove}
-                  >
-                    {t("cancel")}
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-danger"
-                    onClick={() => removeChannel(id)}
-                  >
-                    {t("remove")}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <RemoveChannel
+          id={id}
+          remove={remove}
+          channels={channels}
+          closeRemove={closeRemove}
+        />
       )}
     </div>
   );
