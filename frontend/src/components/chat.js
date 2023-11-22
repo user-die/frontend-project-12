@@ -8,6 +8,10 @@ import uniqueId from "lodash.uniqueid";
 import { io } from "socket.io-client";
 const socket = io();
 
+//Имена каналов не должны повторяться
+//Создатель канала должен быть перемещён в добавленный канал
+//переименование канала (внутри модального окна). Имена каналов не должны повторяться
+
 const Chat = () => {
   const [messages, setMessages] = useState();
   const [modal, setModal] = useState();
@@ -31,7 +35,6 @@ const Chat = () => {
         .then((response) => {
           setMessages(response.data.messages);
           setChannels(response.data.channels);
-          console.log(response.data);
         });
     };
     requestData();
@@ -56,6 +59,10 @@ const Chat = () => {
       del(payload.id, channels);
     });
 
+    socket.on("renameChannel", (payload) => {
+      console.log(payload);
+    });
+
     //return () => socket.removeAllListeners();
   }, []);
 
@@ -78,6 +85,10 @@ const Chat = () => {
     }),
   });
 
+  let channelsName = document.querySelectorAll(".text-start");
+
+  console.log();
+
   const formikForChannel = useFormik({
     initialValues: {
       channelName: "",
@@ -97,8 +108,24 @@ const Chat = () => {
     }),
   });
 
-  const map = channels.map((el) => el.name);
-  console.log(map.find("general"));
+  const formikForRenameChannel = useFormik({
+    initialValues: {
+      channelName: "", //document.getElementById(id).textContent,
+    },
+    onSubmit: (values, { resetForm }) => {
+      if (values.channelName !== "") {
+        socket.emit("renameChannel", { id: id, name: values.channelName });
+        setRename(false);
+        resetForm();
+      }
+    },
+    validationSchema: yup.object().shape({
+      channelName: yup
+        .string()
+        .min(3, "Минимум 3 символа")
+        .required("Введите пароль"),
+    }),
+  });
 
   const loginData = useContext(MyContext);
 
@@ -133,25 +160,17 @@ const Chat = () => {
     }
   }
 
-  function openRename() {
+  function openRename(e) {
     const body = document.querySelector("body");
     body.className = "h-100 bg-light modal-open";
     setRename(true);
+    setId(e.target.id);
   }
 
   function closeRename() {
     const body = document.querySelector("body");
     body.className = "h-100 bg-light";
     setRename(false);
-  }
-
-  function renameChannel(e) {
-    e.preventDefault();
-  }
-
-  function newNameForChannel(e) {
-    setCurrentChannel(e.target.value);
-    socket.emit("renameChannel", { id: 3, name: currentChannel });
   }
 
   function removeChannel(id) {
@@ -270,6 +289,7 @@ const Chat = () => {
                             className="dropdown-item"
                             role="button"
                             tabIndex="0"
+                            id={el.id}
                             href="#"
                             onClick={openRename}
                           >
@@ -337,11 +357,9 @@ const Chat = () => {
           </div>
         </div>
       </div>
-
       {(modal || rename || remove) && (
         <div className="fade modal-backdrop show"></div>
       )}
-
       {modal && (
         <div
           role="dialog"
@@ -373,7 +391,11 @@ const Chat = () => {
                       value={formikForChannel.values.channelName}
                     ></input>
                     <label className="visually-hidden" htmlFor="name"></label>
-                    <div className="invalid-feedback"></div>
+                    {formikForChannel.errors.channelName && (
+                      <div className="text-danger">
+                        {formikForChannel.errors.channelName}
+                      </div>
+                    )}
                     <div className="d-flex justify-content-end">
                       <button
                         type="button"
@@ -415,14 +437,14 @@ const Chat = () => {
                 ></button>
               </div>
               <div className="modal-body">
-                <form onSubmit={renameChannel}>
+                <form onSubmit={formikForRenameChannel.handleSubmit}>
                   <div>
                     <input
-                      name="name"
+                      name="channelName"
                       id="name"
                       className="mb-2 form-control"
-                      onChange={newNameForChannel}
-                      value={currentChannel}
+                      onChange={formikForRenameChannel.handleChange}
+                      value={formikForRenameChannel.values.channelName}
                     ></input>
                     <label className="visually-hidden" htmlFor="name"></label>
                     <div className="invalid-feedback"></div>
