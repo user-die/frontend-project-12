@@ -12,16 +12,12 @@ import uniqueId from "lodash.uniqueid";
 import { io } from "socket.io-client";
 const socket = io();
 
-//Переименование
-//Открытие дроп-окна по одному щелчку
-
 const Chat = () => {
   const [messages, setMessages] = useState();
   const [modal, setModal] = useState();
   const [channel, setChannel] = useState({ name: "general", id: 1 });
   const [channels, setChannels] = useState();
   const [rename, setRename] = useState(false);
-  const [currentChannel, setCurrentChannel] = useState();
   const [remove, setRemove] = useState();
   const [id, setId] = useState();
 
@@ -38,6 +34,7 @@ const Chat = () => {
         .then((response) => {
           setMessages(response.data.messages);
           setChannels(response.data.channels);
+          console.log(response.data);
         });
     };
     requestData();
@@ -63,14 +60,17 @@ const Chat = () => {
     });
 
     socket.on("renameChannel", (payload) => {
-      console.log(payload);
-      setChannels((channels) =>
-        channels.splice(
-          channels.indexOf(channels.filter((el) => el.id == payload.id)[0]),
-          999,
+      setChannels((channels) => {
+        const copyChannels = [...channels];
+        copyChannels.splice(
+          copyChannels.indexOf(
+            copyChannels.filter((el) => el.id == payload.id)[0]
+          ),
+          1,
           payload
-        )
-      );
+        );
+        return copyChannels;
+      });
     });
 
     //return () => socket.removeAllListeners();
@@ -123,9 +123,6 @@ const Chat = () => {
   function dropMenu(event) {
     if (event.target.nextElementSibling.className === "dropdown-menu") {
       event.target.nextElementSibling.className = "dropdown-menu show";
-      setCurrentChannel(
-        event.target.parentElement.querySelector("button").textContent
-      );
     } else {
       event.target.nextElementSibling.className = "dropdown-menu";
     }
