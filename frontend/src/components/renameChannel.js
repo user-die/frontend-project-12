@@ -9,21 +9,24 @@ const RenameChannel = (props) => {
 
   const formikForRenameChannel = useFormik({
     initialValues: {
-      channelName: "", //document.getElementById(id).textContent,
+      channelName: document
+        .getElementById(props.id)
+        .textContent.replace("#", ""),
     },
     onSubmit: (values, { resetForm }) => {
       socket.emit("renameChannel", { id: props.id, name: values.channelName });
       props.closeRename();
       resetForm();
+      props.renamed();
     },
     validationSchema: yup.object().shape({
       channelName: yup
         .string()
-        .min(3, "Минимум 3 символа")
-        .required("Введите пароль")
+        .min(3, t("min3ChannelName"))
+        .required(t("required"))
         .notOneOf(
           props.channels.map((el) => el.name),
-          "Такой канал уже существует"
+          t("channel already")
         ),
     }),
   });

@@ -8,6 +8,7 @@ const RemoveChannel = (props) => {
   function removeChannel(id) {
     socket.emit("removeChannel", { id: id });
     props.closeRemove();
+    props.deleted();
     //setRemove(false);
   }
 

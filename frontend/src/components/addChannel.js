@@ -13,22 +13,19 @@ const AddChannel = (props) => {
     },
     onSubmit: (values, { resetForm }) => {
       socket.emit("newChannel", { name: values.channelName });
+
       props.closeAddChannel();
       resetForm();
-
-      props.setChannel({
-        name: values.channelName,
-        id: props.channels.filter((el) => el.name == values.channelName),
-      });
+      props.created();
     },
     validationSchema: yup.object().shape({
       channelName: yup
         .string()
-        .min(3, "Минимум 3 символа")
-        .required("Введите название канала")
+        .min(3, t("min3ChannelName"))
+        .required(t("required"))
         .notOneOf(
           props.channels.map((el) => el.name),
-          "Такой канал уже существует"
+          t("channel already")
         ),
     }),
   });

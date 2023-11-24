@@ -5,7 +5,7 @@ import axios from "axios";
 import { useContext, useState } from "react";
 import { MyContext } from "./MyContext";
 
-export const Form = () => {
+export const Form = (props) => {
   const [error401, setError401] = useState();
   const loginData = useContext(MyContext);
 
@@ -27,6 +27,7 @@ export const Form = () => {
           if (response.status == 200) {
             localStorage.setItem("token", response.data.token);
             loginData.setLogin("login");
+            loginData.setNickname(response.data.username);
           }
         })
 
@@ -35,6 +36,9 @@ export const Form = () => {
             setError401(true);
           }
           console.log(error.response.status);
+          if (error.response.status == 500) {
+            props.serverError();
+          }
         });
     },
     validationSchema: yup.object().shape({

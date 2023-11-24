@@ -4,6 +4,7 @@
   "password": "password",
   "no account?": "don't you have account?",
   "registration": "registration",
+  "serverError": "the server is not responding",
 
   "username": "username",
   "confirmPassword": "confirm password",
@@ -35,5 +36,12 @@
   "max20Password": "password must be at most 20 characters",
   "match": "passwords must match",
   "consist": "The password must consist of Latin or Cyrillic characters and contain numbers",
-  "already": "A user with the same name already exists"
+  "already": "A user with the same name already exists",
+  "min3ChannelName": "channel name must contain at least 3 characters",
+  "channel already": "a channel with that name already exists",
+  "required": "required field",
+
+  "channel created": "channel created",
+  "channel renamed": "channel renamed",
+  "channel deleted": "channel deleted"
 }
