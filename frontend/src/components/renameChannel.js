@@ -1,7 +1,8 @@
 import { useFormik } from "formik";
-import * as yup from "yup";
 import { useTranslation } from "react-i18next";
 import { io } from "socket.io-client";
+import * as yup from "yup";
+import filter from "leo-profanity";
 const socket = io();
 
 const RenameChannel = (props) => {
@@ -14,7 +15,8 @@ const RenameChannel = (props) => {
         .textContent.replace("#", ""),
     },
     onSubmit: (values, { resetForm }) => {
-      socket.emit("renameChannel", { id: props.id, name: values.channelName });
+      const channel = filter.clean(values.channelName);
+      socket.emit("renameChannel", { id: props.id, name: channel });
       props.closeRename();
       resetForm();
       props.renamed();

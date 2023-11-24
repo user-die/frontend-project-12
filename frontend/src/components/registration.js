@@ -1,10 +1,10 @@
 import { useTranslation } from "react-i18next";
-import logo from "./images/avatar.jpg";
 import { useFormik } from "formik";
-import * as yup from "yup";
-import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import logo from "./images/avatar.jpg";
+import * as yup from "yup";
+import axios from "axios";
 
 const Registration = () => {
   const [err, setErr] = useState();

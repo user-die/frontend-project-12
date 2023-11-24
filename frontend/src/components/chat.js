@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useTranslation } from "react-i18next";
 import { useContext, useEffect, useState } from "react";
 import { MyContext } from "./MyContext";
+import filter from "leo-profanity";
 import axios from "axios";
 import * as yup from "yup";
 import { useFormik } from "formik";
@@ -14,8 +15,6 @@ import uniqueId from "lodash.uniqueid";
 import { io } from "socket.io-client";
 const socket = io();
 
-// склонение сообщений : 0сообщений, 3 сообщения.
-// перевести ошибки
 // Кнопка переключения языка
 // уведомления при ошибках сервера
 
@@ -34,6 +33,7 @@ const Chat = () => {
   const created = () => toast(t("channel created"));
   const renamed = () => toast(t("channel renamed"));
   const deleted = () => toast(t("channel deleted"));
+  const serverError = () => toast.error(t("serverError"));
 
   useEffect(() => {
     const requestData = async () => {
@@ -46,6 +46,9 @@ const Chat = () => {
         .then((response) => {
           setMessages(response.data.messages);
           setChannels(response.data.channels);
+          if (response.status == 500) {
+            serverError();
+          }
         });
     };
     requestData();
@@ -94,8 +97,10 @@ const Chat = () => {
     },
     onSubmit: (values, { resetForm }) => {
       if (values.message !== "") {
+        const message = filter.clean(values.message);
+
         socket.emit("newMessage", {
-          body: values.message,
+          body: message,
           channelId: channel.id,
           username: loginData.nickname,
         });
@@ -109,16 +114,16 @@ const Chat = () => {
 
   function declinationOfMessage(n, text_forms) {
     if (n % 10 == 1 && n !== 11) {
-      return `${n} ${text_forms[2]}`;
+      return text_forms[2];
     } else if (
       (n % 10 == 2 || n % 10 == 3 || n % 10 == 4) &&
       n !== 12 &&
       n !== 13 &&
       n !== 14
     ) {
-      return `${n} ${text_forms[1]}`;
+      return text_forms[1];
     } else {
-      return `${n} ${text_forms[0]}`;
+      return text_forms[0];
     }
   }
 
@@ -310,11 +315,18 @@ const Chat = () => {
                   <p className="m-0">{channel && <b>{channel.name}</b>}</p>
                   {channel && messages && (
                     <span className="text-muted">
-                      {declinationOfMessage(
+                      {
                         messages.filter((el) => el.channelId == channel.id)
-                          .length,
-                        ["сообщений", "сообщения", "сообщение"]
-                      )}
+                          .length
+                      }{" "}
+                      &nbsp;
+                      {t("message", {
+                        context: declinationOfMessage(
+                          messages.filter((el) => el.channelId == channel.id)
+                            .length,
+                          ["sy", "s", false]
+                        ),
+                      })}
                     </span>
                   )}
                 </div>

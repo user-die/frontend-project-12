@@ -12,7 +12,6 @@
 
   "log out": "log out",
   "channels": "channels",
-  "messages": "messages",
   "enter a message": "enter a message...",
   "add сhannel": "add сhannel",
   "cancel": "cancel",
@@ -22,6 +21,10 @@
   "remove": "remove",
   "remove channel": "remove channel",
   "sure?": "sure?",
+
+  "message": "message",
+  "message_s": "messages",
+  "message_sy": "messages",
 
   "page not found": "page not found",
   "But you can go": "But you can go",

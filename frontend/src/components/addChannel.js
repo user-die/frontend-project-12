@@ -1,7 +1,8 @@
 import { useFormik } from "formik";
-import * as yup from "yup";
 import { useTranslation } from "react-i18next";
 import { io } from "socket.io-client";
+import filter from "leo-profanity";
+import * as yup from "yup";
 const socket = io();
 
 const AddChannel = (props) => {
@@ -12,8 +13,8 @@ const AddChannel = (props) => {
       channelName: "",
     },
     onSubmit: (values, { resetForm }) => {
-      socket.emit("newChannel", { name: values.channelName });
-
+      const channel = filter.clean(values.channelName);
+      socket.emit("newChannel", { name: channel });
       props.closeAddChannel();
       resetForm();
       props.created();
