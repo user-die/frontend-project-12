@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import ChangeLanguage from "./changeLanguage";
 
 const NotFound = () => {
   const { t } = useTranslation();
@@ -11,12 +12,13 @@ const NotFound = () => {
             <a className="navbar-brand" href="/">
               Chat Slack
             </a>
+            <ChangeLanguage />
           </div>
         </nav>
         <div className="text-center">
           <h1 className="h4 text-muted">{t("page not found")}</h1>
           <p className="text-muted">
-            {t("But you can go")} <a>{t("the main page")}</a>
+            {t("But you can go")} <a href="/">{t("the main page")}</a>
           </p>
         </div>
       </div>

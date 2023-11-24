@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import logo from "./images/avatar.jpg";
 import * as yup from "yup";
 import axios from "axios";
+import ChangeLanguage from "./changeLanguage";
 
 const Registration = () => {
   const [err, setErr] = useState();
@@ -65,6 +66,7 @@ const Registration = () => {
             <a className="navbar-brand" href="/">
               Chat Slack
             </a>
+            <ChangeLanguage />
           </div>
         </nav>
         <div className="container-fluid h-100">

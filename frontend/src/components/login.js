@@ -3,6 +3,7 @@ import logo from "./images/im1.jpeg";
 import { useTranslation } from "react-i18next";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ChangeLanguage from "./changeLanguage";
 
 const Login = () => {
   const { t } = useTranslation();
@@ -15,6 +16,7 @@ const Login = () => {
           <a className="navbar-brand" href="/">
             Chat Slack
           </a>
+          <ChangeLanguage />
         </div>
       </nav>
       <ToastContainer />
