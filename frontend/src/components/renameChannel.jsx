@@ -1,34 +1,41 @@
-import { useFormik } from "formik";
-import { useTranslation } from "react-i18next";
-import { io } from "socket.io-client";
-import * as yup from "yup";
-import filter from "leo-profanity";
-const socket = io();
+import { useFormik } from 'formik';
+import { useTranslation } from 'react-i18next';
+import { io } from 'socket.io-client';
+import * as yup from 'yup';
+import filter from 'leo-profanity';
 
-const RenameChannel = (props) => {
+function RenameChannel(props) {
   const { t } = useTranslation();
+  const socket = io();
+  const {
+    id,
+    channels,
+    rename,
+    renamed,
+    closeRename,
+  } = props;
 
   const formikForRenameChannel = useFormik({
     initialValues: {
       channelName: document
-        .getElementById(props.id)
-        .textContent.replace("#", ""),
+        .getElementById(id)
+        .textContent.replace('#', ''),
     },
     onSubmit: (values, { resetForm }) => {
       const channel = filter.clean(values.channelName);
-      socket.emit("renameChannel", { id: props.id, name: channel });
-      props.closeRename();
+      socket.emit('renameChannel', { id: id, name: channel });
+      closeRename();
       resetForm();
-      props.renamed();
+      renamed();
     },
     validationSchema: yup.object().shape({
       channelName: yup
         .string()
-        .min(3, t("min3ChannelName"))
-        .required(t("required"))
+        .min(3, t('min3ChannelName'))
+        .required(t('required'))
         .notOneOf(
-          props.channels.map((el) => el.name),
-          t("channel already")
+          channels.map((el) => el.name),
+          t('channel already'),
         ),
     }),
   });
@@ -39,19 +46,19 @@ const RenameChannel = (props) => {
       aria-modal="true"
       className="fade modal show"
       tabIndex="-1"
-      style={{ display: ` ${props.rename ? "block" : "none"}` }}
+      style={{ display: ` ${rename ? 'block' : 'none'}` }}
     >
       <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content">
           <div className="modal-header">
-            <div className="modal-title h4">{t("rename сhannel")}</div>
+            <div className="modal-title h4">{t('rename сhannel')}</div>
             <button
               type="button"
               aria-label="Close"
               data-bs-dismiss="modal"
               className="btn btn-close"
-              onClick={props.closeRename}
-            ></button>
+              onClick={closeRename}
+            />
           </div>
           <div className="modal-body">
             <form onSubmit={formikForRenameChannel.handleSubmit}>
@@ -62,8 +69,8 @@ const RenameChannel = (props) => {
                   className="mb-2 form-control"
                   onChange={formikForRenameChannel.handleChange}
                   value={formikForRenameChannel.values.channelName}
-                ></input>
-                <label className="visually-hidden" htmlFor="name"></label>
+                />
+                <label className="visually-hidden" htmlFor="name"/>
                 {formikForRenameChannel.errors.channelName && (
                   <div className="text-danger">
                     {formikForRenameChannel.errors.channelName}
@@ -73,12 +80,12 @@ const RenameChannel = (props) => {
                   <button
                     type="button"
                     className="me-2 btn btn-secondary"
-                    onClick={props.closeRename}
+                    onClick={closeRename}
                   >
-                    {t("cancel")}
+                    {t('cancel')}
                   </button>
                   <button type="submit" className="btn btn-primary">
-                    {t("submit")}
+                    {t('submit')}
                   </button>
                 </div>
               </div>

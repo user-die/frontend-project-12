@@ -1,8 +1,8 @@
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import NotFound from "./components/notFound";
-import Registration from "./components/registration";
+import NotFound from "./components/pages/notFound";
+import Registration from "./components/pages/registration";
 import Switch from "./components/switch";
 
 function App() {

@@ -1,19 +1,19 @@
-import { useState } from "react";
-import { useTranslation } from "react-i18next";
-import ru from "./images/ru.png";
-import en from "./images/en.png";
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import ru from './images/ru.png';
+import en from './images/en.png';
 
-const ChangeLanguage = () => {
+function ChangeLanguage() {
   const [open, setOpen] = useState();
   const { i18n } = useTranslation();
 
   function changeLanguageRu() {
-    i18n.changeLanguage("ru");
+    i18n.changeLanguage('ru');
     setOpen(false);
   }
 
   function changeLanguageEn() {
-    i18n.changeLanguage("en");
+    i18n.changeLanguage('en');
     setOpen(false);
   }
 
@@ -30,6 +30,7 @@ const ChangeLanguage = () => {
       <button
         className="btn btn-dark d-flex align-items-center"
         onClick={menuControl}
+        type="button"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -44,18 +45,18 @@ const ChangeLanguage = () => {
         &nbsp;
         <p className="text-uppercase p-0 m-0">{i18n.language}</p>
       </button>
-      <div className={open ? "dropdown-menu show" : "dropdown-menu"}>
-        <button className="dropdown-item" onClick={changeLanguageRu}>
+      <div className={open ? 'dropdown-menu show' : 'dropdown-menu'}>
+        <button type="button" className="dropdown-item" onClick={changeLanguageRu}>
           Русский &nbsp;
-          <img className="h-25 w-25" src={ru} />
+          <img alt="" className="h-25 w-25" src={ru} />
         </button>
-        <button className="dropdown-item" onClick={changeLanguageEn}>
+        <button type="button" className="dropdown-item" onClick={changeLanguageEn}>
           English &nbsp; &nbsp;
-          <img className="h-25 w-25" src={en} />
+          <img alt="" className="h-25 w-25" src={en} />
         </button>
       </div>
     </div>
   );
-};
+}
 
 export default ChangeLanguage;

@@ -1,15 +1,20 @@
-import { useTranslation } from "react-i18next";
-import { io } from "socket.io-client";
-const socket = io();
+import { useTranslation } from 'react-i18next';
+import { io } from 'socket.io-client';
 
-const RemoveChannel = (props) => {
+function RemoveChannel(props) {
   const { t } = useTranslation();
+  const socket = io();
+  const {
+    remove,
+    id,
+    closeRemove,
+    deleted,
+  } = props;
 
   function removeChannel(id) {
-    socket.emit("removeChannel", { id: id });
-    props.closeRemove();
-    props.deleted();
-    //setRemove(false);
+    socket.emit('removeChannel', { id: id });
+    closeRemove();
+    deleted();
   }
 
   return (
@@ -18,36 +23,36 @@ const RemoveChannel = (props) => {
       aria-modal="true"
       className="fade modal show"
       tabIndex="-1"
-      style={{ display: ` ${props.remove ? "block" : "none"}` }}
+      style={{ display: ` ${remove ? 'block' : 'none'}` }}
     >
       <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content">
           <div className="modal-header">
-            <div className="modal-title h4">{t("remove channel")}</div>
+            <div className="modal-title h4">{t('remove channel')}</div>
             <button
               type="button"
               aria-label="Close"
               data-bs-dismiss="modal"
               className="btn btn-close"
-              onClick={props.closeRemove}
-            ></button>
+              onClick={closeRemove}
+            />
           </div>
           <div className="modal-body">
-            <p className="lead">{t("sure?")}</p>
+            <p className="lead">{t('sure?')}</p>
             <div className="d-flex justify-content-end">
               <button
                 type="button"
                 className="me-2 btn btn-secondary"
-                onClick={props.closeRemove}
+                onClick={closeRemove}
               >
-                {t("cancel")}
+                {t('cancel')}
               </button>
               <button
                 type="button"
                 className="btn btn-danger"
-                onClick={() => removeChannel(props.id)}
+                onClick={() => removeChannel(id)}
               >
-                {t("remove")}
+                {t('remove')}
               </button>
             </div>
           </div>

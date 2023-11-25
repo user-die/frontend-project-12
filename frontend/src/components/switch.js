@@ -1,13 +1,13 @@
-import Chat from "./chat";
-import Login from "./login";
-import { useState } from "react";
-import { MyContext } from "./MyContext";
+import Chat from './pages/chat';
+import Login from './pages/login';
+import { useState } from 'react';
+import MyContext from './MyContext';
 
-const Switch = () => {
-  const [login, setLogin] = useState("notLogin");
+function Switch () {
+  const [login, setLogin] = useState('notLogin');
   const [nickname, setNickname] = useState();
   switch (login) {
-    case "login": {
+    case 'login': {
       return (
         <MyContext.Provider value={{ login, setLogin, nickname, setNickname }}>
           <Chat />
@@ -15,12 +15,15 @@ const Switch = () => {
       );
     }
 
-    case "notLogin": {
+    case 'notLogin': {
       return (
         <MyContext.Provider value={{ login, setLogin, nickname, setNickname }}>
           <Login />
         </MyContext.Provider>
       );
+    }
+    default: {
+      return false;
     }
   }
 };
