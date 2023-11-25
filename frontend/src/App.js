@@ -1,17 +1,17 @@
-import "./App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import './App.css';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-import NotFound from "./components/pages/notFound";
-import Registration from "./components/pages/registration";
-import Switch from "./components/switch";
+import NotFound from './components/pages/notFound';
+import Registration from './components/pages/registration';
+import Switch from './components/switch';
 
 function App() {
   const authorization = {
-    isLogin: "notLogin",
+    isLogin: 'notLogin',
   };
 
-  const body = document.querySelector("body");
-  body.className = "h-100 bg-light";
+  const body = document.querySelector('body');
+  body.className = 'h-100 bg-light';
   return (
     <BrowserRouter>
       <Routes>

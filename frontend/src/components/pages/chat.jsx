@@ -2,17 +2,19 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useTranslation } from 'react-i18next';
 import { useContext, useEffect, useState } from 'react';
-import MyContext from '../MyContext';
 import filter from 'leo-profanity';
 import axios from 'axios';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
 import uniqueId from 'lodash.uniqueid';
 import { io } from 'socket.io-client';
+import MyContext from '../MyContext';
 import AddChannel from '../addChannel';
 import RenameChannel from '../renameChannel';
 import RemoveChannel from '../removeChannel';
 import ChangeLanguage from '../changeLanguage';
+
+const socket = io();
 
 export default function Chat() {
   const [messages, setMessages] = useState();
@@ -23,7 +25,6 @@ export default function Chat() {
   const [remove, setRemove] = useState();
   const [id, setId] = useState();
 
-  const socket = io();
   const { t } = useTranslation();
   const loginData = useContext(MyContext);
 
@@ -43,7 +44,7 @@ export default function Chat() {
         .then((response) => {
           setMessages(response.data.messages);
           setChannels(response.data.channels);
-          if (response.status == 500) {
+          if (response.status === 500) {
             serverError();
           }
         });
@@ -136,13 +137,11 @@ export default function Chat() {
   const body = document.querySelector('body');
 
   function openAddChannel() {
-    //const body = document.querySelector('body');
     body.className = 'h-100 bg-light modal-open';
     setModal(true);
   }
 
   function closeAddChannel() {
-    //const body = document.querySelector('body');
     body.className = 'h-100 bg-light';
     setModal(false);
   }
@@ -156,27 +155,23 @@ export default function Chat() {
   }
 
   function openRename(e) {
-    //const body = document.querySelector('body');
     body.className = 'h-100 bg-light modal-open';
     setRename(true);
     setId(e.target.id);
   }
 
   function closeRename() {
-    //const body = document.querySelector("body");
-    body.className = "h-100 bg-light";
+    body.className = 'h-100 bg-light';
     setRename(false);
   }
 
   function openRemove(id) {
-    //const body = document.querySelector('body');
     body.className = 'h-100 bg-light modal-open';
     setId(id);
     setRemove(true);
   }
 
   function closeRemove() {
-    //const body = document.querySelector('body');
     body.className = 'h-100 bg-light';
     setRemove(false);
   }
@@ -392,7 +387,7 @@ export default function Chat() {
 
       {rename && (
         <RenameChannel
-          id={id}
+          identifier={id}
           rename={rename}
           renamed={renamed}
           channels={channels}
@@ -402,7 +397,7 @@ export default function Chat() {
 
       {remove && (
         <RemoveChannel
-          id={id}
+          identifier={id}
           remove={remove}
           deleted={deleted}
           channels={channels}

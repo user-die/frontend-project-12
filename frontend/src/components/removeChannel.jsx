@@ -1,18 +1,18 @@
 import { useTranslation } from 'react-i18next';
 import { io } from 'socket.io-client';
 
-function RemoveChannel(props) {
+export default function RemoveChannel(props) {
   const { t } = useTranslation();
   const socket = io();
   const {
     remove,
-    id,
+    identifier,
     closeRemove,
     deleted,
   } = props;
 
-  function removeChannel(id) {
-    socket.emit('removeChannel', { id: id });
+  function removeChannel() {
+    socket.emit('removeChannel', { id: identifier });
     closeRemove();
     deleted();
   }
@@ -50,7 +50,7 @@ function RemoveChannel(props) {
               <button
                 type="button"
                 className="btn btn-danger"
-                onClick={() => removeChannel(id)}
+                onClick={() => removeChannel()}
               >
                 {t('remove')}
               </button>
@@ -60,6 +60,4 @@ function RemoveChannel(props) {
       </div>
     </div>
   );
-};
-
-export default RemoveChannel;
+}

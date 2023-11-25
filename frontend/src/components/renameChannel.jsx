@@ -4,11 +4,12 @@ import { io } from 'socket.io-client';
 import * as yup from 'yup';
 import filter from 'leo-profanity';
 
-function RenameChannel(props) {
+const socket = io();
+
+export default function RenameChannel(props) {
   const { t } = useTranslation();
-  const socket = io();
   const {
-    id,
+    identifier,
     channels,
     rename,
     renamed,
@@ -18,12 +19,15 @@ function RenameChannel(props) {
   const formikForRenameChannel = useFormik({
     initialValues: {
       channelName: document
-        .getElementById(id)
+        .getElementById(identifier)
         .textContent.replace('#', ''),
     },
     onSubmit: (values, { resetForm }) => {
       const channel = filter.clean(values.channelName);
-      socket.emit('renameChannel', { id: id, name: channel });
+      socket.emit('renameChannel', {
+        id: identifier,
+        name: channel,
+      });
       closeRename();
       resetForm();
       renamed();
@@ -70,7 +74,6 @@ function RenameChannel(props) {
                   onChange={formikForRenameChannel.handleChange}
                   value={formikForRenameChannel.values.channelName}
                 />
-                <label className="visually-hidden" htmlFor="name"/>
                 {formikForRenameChannel.errors.channelName && (
                   <div className="text-danger">
                     {formikForRenameChannel.errors.channelName}
@@ -95,6 +98,4 @@ function RenameChannel(props) {
       </div>
     </div>
   );
-};
-
-export default RenameChannel;
+}

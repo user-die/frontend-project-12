@@ -23,21 +23,19 @@ export default function Form(props) {
           username: values.nickname,
           password: values.password,
         })
-
         .then((response) => {
-          if (response.status == 200) {
+          if (response.status === 200) {
             localStorage.setItem('token', response.data.token);
             loginData.setLogin('login');
             loginData.setNickname(response.data.username);
           }
         })
-
         .catch((error) => {
-          if (error.response.status == 401) {
+          if (error.response.status === 401) {
             setError401(true);
           }
 
-          if (error.response.status == 500) {
+          if (error.response.status === 500) {
             serverError();
           }
         });
@@ -88,7 +86,7 @@ export default function Form(props) {
       {formik.errors.password && (
         <div className="text-danger">{formik.errors.password}</div>
       )}
-      <button type="button" className="w-100 mb-3 btn btn-outline-dark">{t('login')}</button>
+      <button type="submit" className="w-100 mb-3 btn btn-outline-dark">{t('login')}</button>
     </form>
   );
 }

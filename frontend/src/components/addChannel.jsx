@@ -4,9 +4,11 @@ import { io } from 'socket.io-client';
 import filter from 'leo-profanity';
 import * as yup from 'yup';
 
+const socket = io();
+
 export default function AddChannel(props) {
   const { t } = useTranslation();
-  const socket = io();
+
   const {
     created,
     closeAddChannel,
@@ -60,16 +62,13 @@ export default function AddChannel(props) {
           <div className="modal-body">
             <form onSubmit={formikForChannel.handleSubmit}>
               <div>
-
-                <label htmlFor="name" className="visually-hidden">
-                  <input
-                    name="channelName"
-                    id="name"
-                    className="mb-2 form-control"
-                    onChange={formikForChannel.handleChange}
-                    value={formikForChannel.values.channelName}
-                  />
-                </label>
+                <input
+                  name="channelName"
+                  id="name"
+                  className="mb-2 form-control"
+                  onChange={formikForChannel.handleChange}
+                  value={formikForChannel.values.channelName}
+                />
                 {formikForChannel.errors.channelName && (
                   <div className="text-danger">
                     {formikForChannel.errors.channelName}
