@@ -35,7 +35,7 @@ export default function Chat() {
 
   useEffect(() => {
     const requestData = async () => {
-      const data = await axios
+      await axios
         .get('/api/v1/data', {
           headers: {
             Authorization: `Bearer ${localStorage.token}`,
@@ -146,11 +146,11 @@ export default function Chat() {
     setModal(false);
   }
 
-  function dropMenu(event) {
-    if (event.target.nextElementSibling.className === 'dropdown-menu') {
-      event.target.nextElementSibling.className = 'dropdown-menu show';
+  function dropMenu(e) {
+    if (e.target.nextElementSibling.className === 'dropdown-menu') {
+      e.target.nextElementSibling.className = 'dropdown-menu show';
     } else {
-      event.target.nextElementSibling.className = 'dropdown-menu';
+      e.target.nextElementSibling.className = 'dropdown-menu';
     }
   }
 
@@ -231,8 +231,7 @@ export default function Chat() {
                 id="channels-box"
                 className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block"
               >
-                {channels &&
-                  channels.map((el) => (
+                {channels && channels.map((el) => (
                     <li key={uniqueId()} className="nav-item w-100">
                       <div
                         className="d-flex dropdown btn-group"
@@ -298,7 +297,7 @@ export default function Chat() {
                         </div>
                       </div>
                     </li>
-                  ))}
+                ))}
               </ul>
             </div>
             <div className="col p-0 h-100">
@@ -329,7 +328,9 @@ export default function Chat() {
                   {messages && messages.filter((el) => el.channelId == channel.id)
                     .map((message) => (
                       <div key={uniqueId()} className="text-break mb-2">
-                        <b>{message.username}</b>:{message.body}
+                        <b>{message.username}</b>
+                        :
+                        {message.body}
                       </div>
                     ))}
                 </div>

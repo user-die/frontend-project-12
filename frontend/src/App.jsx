@@ -6,9 +6,11 @@ import Registration from './components/pages/registration';
 import Switch from './components/switch';
 
 function App() {
+  /*
   const authorization = {
     isLogin: 'notLogin',
   };
+  */
 
   const body = document.querySelector('body');
   body.className = 'h-100 bg-light';
