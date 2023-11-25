@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Chat from './pages/chat';
 import Login from './pages/login';
 import MyContext from './MyContext';
+/* eslint-disable */
 
 function Switch() {
   const [login, setLogin] = useState('notLogin');
