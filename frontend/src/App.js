@@ -5,23 +5,15 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import NotFound from "./components/pages/notFound";
 import Registration from "./components/pages/registration";
 import Switch from "./components/switch";
-import { useState } from "react";
-
-const rollbarConfig = {
-  accessToken: "a2a306803a5a4cdda9549f650046b346",
-  environment: "testenv",
-};
-
-function TestError() {
-  const a = null;
-  return a.hello();
-}
+import { useEffect, useState } from "react";
 
 function App() {
-  const [theme, setTheme] = useState("dark");
+  const [theme, setTheme] = useState(localStorage.getItem("theme") || "dark");
 
   const body = document.querySelector("body");
   body.setAttribute("data-bs-theme", theme);
+
+  useEffect(() => localStorage.setItem("theme", theme), [theme]);
 
   function changeTheme() {
     if (theme === "light") {

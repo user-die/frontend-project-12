@@ -132,6 +132,7 @@ export default function Chat(props) {
 
   function quite() {
     loginData.setLogin("notLogin");
+    localStorage.setItem("token", false);
   }
 
   function changeChannel(e) {
