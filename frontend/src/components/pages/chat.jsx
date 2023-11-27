@@ -14,11 +14,12 @@ import AddChannel from "../addChannel";
 import RenameChannel from "../renameChannel";
 import RemoveChannel from "../removeChannel";
 import ChangeLanguage from "../changeLanguage";
-import ChangeTheme from "../changeTheme";
+import { MoonStarsFill } from "react-bootstrap-icons";
+import { SunFill } from "react-bootstrap-icons";
 
 const socket = io();
 
-export default function Chat() {
+export default function Chat(props) {
   const [messages, setMessages] = useState();
   const [modal, setModal] = useState();
   const [channel, setChannel] = useState({ name: "general", id: 1 });
@@ -26,6 +27,8 @@ export default function Chat() {
   const [rename, setRename] = useState(false);
   const [remove, setRemove] = useState();
   const [id, setId] = useState();
+
+  const { theme, changeTheme } = props;
 
   const { t } = useTranslation();
   const loginData = useContext(MyContext);
@@ -190,7 +193,11 @@ export default function Chat() {
                 </a>
               </div>
               <div className="col-1">
-                <ChangeTheme />
+                <button onClick={changeTheme} className="btn border-secondary">
+                  {theme === "light" && <MoonStarsFill color="royalblue" />}
+
+                  {theme === "dark" && <SunFill color="royalblue" />}
+                </button>
               </div>
               <div className="col-1">
                 <ChangeLanguage />

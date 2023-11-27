@@ -1,14 +1,17 @@
-import { useTranslation } from 'react-i18next';
-import { ToastContainer, toast } from 'react-toastify';
-import Form from '../form';
-import logo from '../images/im1.jpeg';
-import 'react-toastify/dist/ReactToastify.css';
-import ChangeLanguage from '../changeLanguage';
-import ChangeTheme from '../changeTheme';
+/* eslint-disable */
+import { useTranslation } from "react-i18next";
+import { ToastContainer, toast } from "react-toastify";
+import Form from "../form";
+import logo from "../images/im1.jpeg";
+import "react-toastify/dist/ReactToastify.css";
+import ChangeLanguage from "../changeLanguage";
+import { MoonStarsFill } from "react-bootstrap-icons";
+import { SunFill } from "react-bootstrap-icons";
 
-export default function Login() {
+export default function Login(props) {
   const { t } = useTranslation();
-  const serverError = () => toast.error(t('serverError'));
+  const serverError = () => toast.error(t("serverError"));
+  const { theme, changeTheme } = props;
 
   return (
     <section className="h-100">
@@ -21,7 +24,11 @@ export default function Login() {
               </a>
             </div>
             <div className="col-1">
-              <ChangeTheme />
+              <button onClick={changeTheme} className="btn border-secondary">
+                {theme === "light" && <MoonStarsFill color="royalblue" />}
+
+                {theme === "dark" && <SunFill color="royalblue" />}
+              </button>
             </div>
             <div className="col -1">
               <ChangeLanguage />
@@ -42,8 +49,8 @@ export default function Login() {
               </div>
               <div className="card-footer p-4">
                 <div className="text-center">
-                  <span className="me-1">{t('no account?')}</span>
-                  <a href="/signup">{t('registration')}</a>
+                  <span className="me-1">{t("no account?")}</span>
+                  <a href="/signup">{t("registration")}</a>
                 </div>
               </div>
             </div>

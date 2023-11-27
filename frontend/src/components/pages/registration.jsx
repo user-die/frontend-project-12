@@ -1,36 +1,40 @@
-import { useTranslation } from 'react-i18next';
-import { useFormik } from 'formik';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import * as yup from 'yup';
-import axios from 'axios';
-import logo from '../images/avatar.jpg';
-import ChangeLanguage from '../changeLanguage';
-import ChangeTheme from '../changeTheme';
+/* eslint-disable */
+import { useTranslation } from "react-i18next";
+import { useFormik } from "formik";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import * as yup from "yup";
+import axios from "axios";
+import logo from "../images/avatar.jpg";
+import ChangeLanguage from "../changeLanguage";
+import { MoonStarsFill } from "react-bootstrap-icons";
+import { SunFill } from "react-bootstrap-icons";
 
-export default function Registration() {
+export default function Registration(props) {
   const [err, setErr] = useState();
 
   const { t } = useTranslation();
 
   const navigate = useNavigate();
 
+  const { theme, changeTheme } = props;
+
   const form = useFormik({
     initialValues: {
-      username: '',
-      password: '',
-      confirmPassword: '',
+      username: "",
+      password: "",
+      confirmPassword: "",
     },
     onSubmit: (values) => {
       axios
-        .post('/api/v1/signup', {
+        .post("/api/v1/signup", {
           username: values.username,
           password: values.password,
         })
         .then((response) => {
           if (response.status === 201) {
             setErr(false);
-            navigate('/');
+            navigate("/");
           }
         })
         .catch(() => {
@@ -40,19 +44,19 @@ export default function Registration() {
     validationSchema: yup.object().shape({
       username: yup
         .string()
-        .min(3, t('min3Username'))
-        .max(20, t('max20Username'))
-        .required(t('required nickname')),
+        .min(3, t("min3Username"))
+        .max(20, t("max20Username"))
+        .required(t("required nickname")),
       password: yup
         .string()
-        .min(6, t('min6Password'))
-        .max(20, t('max20Password'))
-        .matches(/(?:[а-яёa-z]\d|\d[в-яёa-z])/i, t('consist'))
-        .required(t('required password')),
+        .min(6, t("min6Password"))
+        .max(20, t("max20Password"))
+        .matches(/(?:[а-яёa-z]\d|\d[в-яёa-z])/i, t("consist"))
+        .required(t("required password")),
       confirmPassword: yup
         .string()
-        .oneOf([yup.ref('password')], t('match'))
-        .required(t('confirmPassword')),
+        .oneOf([yup.ref("password")], t("match"))
+        .required(t("confirmPassword")),
     }),
   });
 
@@ -68,7 +72,11 @@ export default function Registration() {
                 </a>
               </div>
               <div className="col-1">
-                <ChangeTheme />
+                <button onClick={changeTheme} className="btn border-secondary">
+                  {theme === "light" && <MoonStarsFill color="royalblue" />}
+
+                  {theme === "dark" && <SunFill color="royalblue" />}
+                </button>
               </div>
               <div className="col -1">
                 <ChangeLanguage />
@@ -85,23 +93,23 @@ export default function Registration() {
                     <img alt="" src={logo} className="rounded-circle border" />
                   </div>
                   <form className="w-50" onSubmit={form.handleSubmit}>
-                    <h1 className="text-center mb-4">{t('registration')}</h1>
+                    <h1 className="text-center mb-4">{t("registration")}</h1>
                     <div className="form-floating mb-3">
                       <input
-                        placeholder={t('username')}
+                        placeholder={t("username")}
                         autoComplete="username"
                         required
                         className={
                           form.errors.username
-                            ? 'form-control is-invalid'
-                            : 'form-control'
+                            ? "form-control is-invalid"
+                            : "form-control"
                         }
                         id="username"
                         value={form.values.username}
                         onChange={form.handleChange}
                       />
                       <label className="form-label" htmlFor="username">
-                        {t('username')}
+                        {t("username")}
                       </label>
                       {form.errors.username && (
                         <div className="invalid-tooltip">
@@ -111,21 +119,21 @@ export default function Registration() {
                     </div>
                     <div className="form-floating mb-3">
                       <input
-                        placeholder={t('password')}
+                        placeholder={t("password")}
                         required
                         type="password"
                         autoComplete="password"
                         className={
                           form.errors.password
-                            ? 'form-control is-invalid'
-                            : 'form-control'
+                            ? "form-control is-invalid"
+                            : "form-control"
                         }
                         id="password"
                         value={form.values.password}
                         onChange={form.handleChange}
                       />
                       <label className="form-label" htmlFor="password">
-                        {t('password')}
+                        {t("password")}
                       </label>
                       {form.errors.password && (
                         <div className="invalid-tooltip">
@@ -135,21 +143,21 @@ export default function Registration() {
                     </div>
                     <div className="form-floating mb-4">
                       <input
-                        placeholder={t('confirmPassword')}
+                        placeholder={t("confirmPassword")}
                         required
                         type="password"
                         autoComplete="confirmPassword"
                         className={
                           form.errors.confirmPassword
-                            ? 'form-control is-invalid'
-                            : 'form-control'
+                            ? "form-control is-invalid"
+                            : "form-control"
                         }
                         id="confirmPassword"
                         value={form.values.confirmPassword}
                         onChange={form.handleChange}
                       />
                       <label className="form-label" htmlFor="confirmPassword">
-                        {t('confirmPassword')}
+                        {t("confirmPassword")}
                       </label>
                       {form.errors.confirmPassword && (
                         <div className="invalid-tooltip">
@@ -157,12 +165,12 @@ export default function Registration() {
                         </div>
                       )}
                     </div>
-                    {err && <div className="text-danger">{t('already')}</div>}
+                    {err && <div className="text-danger">{t("already")}</div>}
                     <button
                       type="submit"
                       className="w-100 btn btn-outline-primary"
                     >
-                      {t('signup')}
+                      {t("signup")}
                     </button>
                   </form>
                 </div>
