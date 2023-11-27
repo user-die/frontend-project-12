@@ -57,6 +57,8 @@ export default function Chat(props) {
     requestData();
   }, []);
 
+  console.log(localStorage);
+
   function del(id) {
     setChannels((channels) => channels.filter((el) => el.id !== id));
 

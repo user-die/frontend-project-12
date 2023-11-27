@@ -1,12 +1,17 @@
 /* eslint-disable */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Chat from "./pages/chat";
 import Login from "./pages/login";
 import MyContext from "./MyContext";
 
 function Switch(props) {
-  const [login, setLogin] = useState("notLogin");
+  const [login, setLogin] = useState(
+    localStorage.getItem("login") || "notLogin"
+  );
   const [nickname, setNickname] = useState();
+
+  useEffect(() => localStorage.setItem("login", login), [login]);
+
   switch (login) {
     case "login": {
       return (
