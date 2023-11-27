@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { useTranslation } from "react-i18next";
 import { useFormik } from "formik";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import axios from "axios";
@@ -9,9 +9,11 @@ import logo from "../images/avatar.jpg";
 import ChangeLanguage from "../changeLanguage";
 import { MoonStarsFill } from "react-bootstrap-icons";
 import { SunFill } from "react-bootstrap-icons";
+import MyContext from "../MyContext";
 
 export default function Registration(props) {
   const [err, setErr] = useState();
+  const loginData = useContext(MyContext);
 
   const { t } = useTranslation();
 
@@ -35,6 +37,10 @@ export default function Registration(props) {
           if (response.status === 201) {
             setErr(false);
             navigate("/");
+            localStorage.setItem("token", response.data.token);
+            localStorage.setItem("login", "login");
+            loginData.setNickname(response.data.username);
+            console.log(response.data.username);
           }
         })
         .catch(() => {
