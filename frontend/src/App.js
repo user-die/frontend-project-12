@@ -1,7 +1,6 @@
 /* eslint-disable */
 import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Provider, ErrorBoundary } from '@rollbar/react'; 
 
 import NotFound from './components/pages/notFound';
 import Registration from './components/pages/registration';
@@ -19,7 +18,8 @@ function TestError() {
 
 function App() {
   const body = document.querySelector('body');
-  body.className = 'h-100 bg-light';
+  body.className = 'h-100';
+
   return (
     <BrowserRouter>
       <Routes>

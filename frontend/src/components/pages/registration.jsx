@@ -6,6 +6,7 @@ import * as yup from 'yup';
 import axios from 'axios';
 import logo from '../images/avatar.jpg';
 import ChangeLanguage from '../changeLanguage';
+import ChangeTheme from '../changeTheme';
 
 export default function Registration() {
   const [err, setErr] = useState();
@@ -58,21 +59,30 @@ export default function Registration() {
   return (
     <div className="h-100" id="chat">
       <div className="d-flex flex-column h-100">
-        <nav className="shadow-sm navbar navbar-expand-lg navbar-light bg-white">
+        <nav className="shadow-sm navbar navbar-expand-lg navbar-light">
           <div className="container">
-            <a className="navbar-brand" href="/">
-              Chat Slack
-            </a>
-            <ChangeLanguage />
+            <div className="row w-100 align-items-center">
+              <div className="col-10">
+                <a className="navbar-brand" href="/">
+                  Chat Slack
+                </a>
+              </div>
+              <div className="col-1">
+                <ChangeTheme />
+              </div>
+              <div className="col -1">
+                <ChangeLanguage />
+              </div>
+            </div>
           </div>
         </nav>
-        <div className="container-fluid h-100">
+        <div className="container-fluid h-100 bg-secondary-subtle">
           <div className="row justify-content-center align-content-center h-100">
             <div className="col-12 col-md-8 col-xxl-6">
               <div className="card shadow-sm">
                 <div className="card-body d-flex flex-column flex-md-row justify-content-around align-items-center p-5">
                   <div>
-                    <img alt="" src={logo} className="rounded-circle" />
+                    <img alt="" src={logo} className="rounded-circle border" />
                   </div>
                   <form className="w-50" onSubmit={form.handleSubmit}>
                     <h1 className="text-center mb-4">{t('registration')}</h1>
@@ -103,6 +113,7 @@ export default function Registration() {
                       <input
                         placeholder={t('password')}
                         required
+                        type="password"
                         autoComplete="password"
                         className={
                           form.errors.password
@@ -126,6 +137,7 @@ export default function Registration() {
                       <input
                         placeholder={t('confirmPassword')}
                         required
+                        type="password"
                         autoComplete="confirmPassword"
                         className={
                           form.errors.confirmPassword

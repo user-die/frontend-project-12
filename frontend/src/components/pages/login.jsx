@@ -4,6 +4,7 @@ import Form from '../form';
 import logo from '../images/im1.jpeg';
 import 'react-toastify/dist/ReactToastify.css';
 import ChangeLanguage from '../changeLanguage';
+import ChangeTheme from '../changeTheme';
 
 export default function Login() {
   const { t } = useTranslation();
@@ -11,22 +12,31 @@ export default function Login() {
 
   return (
     <section className="h-100">
-      <nav className="shadow-sm navbar navbar-expand-lg navbar-light bg-white">
+      <nav className="shadow-sm navbar navbar-expand-lg navbar-light">
         <div className="container">
-          <a className="navbar-brand" href="/">
-            Chat Slack
-          </a>
-          <ChangeLanguage />
+          <div className="row w-100 align-items-center">
+            <div className="col-10">
+              <a className="navbar-brand" href="/">
+                Chat Slack
+              </a>
+            </div>
+            <div className="col-1">
+              <ChangeTheme />
+            </div>
+            <div className="col -1">
+              <ChangeLanguage />
+            </div>
+          </div>
         </div>
       </nav>
       <ToastContainer />
-      <div className="container-fluid h-100 bg-light">
+      <div className="container-fluid h-100 bg-secondary-subtle">
         <div className="row justify-content-center align-content-center h-100">
           <div className="col-12 col-md-8 col-xxl-6">
             <div className="card shadow-sm">
               <div className="card-body row p-5">
                 <div className="col-12 col-md-6 d-flex align-items-center justify-content-center">
-                  <img alt="" src={logo} className="rounded-circle" />
+                  <img alt="" src={logo} className="rounded-circle border" />
                 </div>
                 <Form serverError={serverError} />
               </div>

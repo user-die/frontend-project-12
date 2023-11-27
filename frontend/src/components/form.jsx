@@ -86,7 +86,7 @@ export default function Form(props) {
       {formik.errors.password && (
         <div className="text-danger">{formik.errors.password}</div>
       )}
-      <button type="submit" className="w-100 mb-3 btn btn-outline-dark">{t('login')}</button>
+      <button type="submit" className="w-100 mb-3 btn border">{t('login')}</button>
     </form>
   );
 }

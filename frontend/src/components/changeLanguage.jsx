@@ -26,9 +26,9 @@ function ChangeLanguage() {
   }
 
   return (
-    <div>
+    <div className="border rounded">
       <button
-        className="btn btn-dark d-flex align-items-center"
+        className="btn d-flex align-items-center"
         onClick={menuControl}
         type="button"
       >
