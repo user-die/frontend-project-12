@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "[![Actions Status](https://github.com/user-die/frontend-project-12/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/user-die/frontend-project-12/actions)",
   "main": "index.js",
+  "engines": {
+  "node": ">=18.18.0 <19.0.0"
+},
   "scripts": {
     "build": "npm run build --prefix frontend",
     "start": "npx start-server -s ./frontend/build",
@@ -35,3 +38,5 @@
     "rollbar": "^2.26.2"
   }
 }
+
+
