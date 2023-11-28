@@ -103,7 +103,7 @@ export default function Chat(props) {
         socket.emit("newMessage", {
           body: message,
           channelId: channel.id,
-          username: loginData.nickname,
+          username: localStorage.getItem("nickname"),
         });
         resetForm();
       }

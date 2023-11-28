@@ -35,12 +35,11 @@ export default function Registration(props) {
         })
         .then((response) => {
           if (response.status === 201) {
-            setErr(false);
-            navigate("/");
             localStorage.setItem("token", response.data.token);
             localStorage.setItem("login", "login");
-            loginData.setNickname(response.data.username);
-            console.log(response.data.username);
+            localStorage.setItem("nickname", response.data.username);
+            setErr(false);
+            navigate("/");
           }
         })
         .catch(() => {

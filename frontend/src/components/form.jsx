@@ -28,7 +28,7 @@ export default function Form(props) {
           localStorage.setItem("token", response.data.token);
           if (localStorage.getItem("token")) {
             loginData.setLogin("login");
-            loginData.setNickname(response.data.username);
+            localStorage.setItem("nickname", response.data.username);
           }
         })
         .catch((error) => {
