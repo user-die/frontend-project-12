@@ -14,7 +14,7 @@ export default function Login(props) {
   const { theme, changeTheme } = props;
 
   return (
-    <section className="h-100">
+    <section className="d-flex flex-column h-100">
       <nav className="shadow-sm navbar navbar-expand-lg navbar-light">
         <div className="container">
           <div className="row w-100 align-items-center">
