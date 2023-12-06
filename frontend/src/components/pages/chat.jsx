@@ -14,8 +14,7 @@ import AddChannel from "../addChannel";
 import RenameChannel from "../renameChannel";
 import RemoveChannel from "../removeChannel";
 import ChangeLanguage from "../changeLanguage";
-import { MoonStarsFill } from "react-bootstrap-icons";
-import { SunFill } from "react-bootstrap-icons";
+import { MoonStarsFill, SunFill } from "react-bootstrap-icons";
 
 const socket = io();
 
