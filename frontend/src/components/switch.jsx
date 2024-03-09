@@ -1,32 +1,22 @@
-import { useState } from 'react';
-import Chat from './pages/chat';
-import Login from './pages/login';
-import MyContext from './MyContext';
-/* eslint-disable */
+import { useSelector } from "react-redux";
+import Chat from "./pages/chat";
+import Login from "./pages/login";
 
 function Switch() {
-  const [login, setLogin] = useState('notLogin');
-  const [nickname, setNickname] = useState();
+  const login = useSelector((state) => state.login.login);
+
   switch (login) {
-    case 'login': {
-      return (
-        <MyContext.Provider value={{ login, setLogin, nickname, setNickname }}>
-          <Chat />
-        </MyContext.Provider>
-      );
+    case true: {
+      return <Chat />;
     }
 
-    case 'notLogin': {
-      return (
-        <MyContext.Provider value={{ login, setLogin, nickname, setNickname }}>
-          <Login />
-        </MyContext.Provider>
-      );
+    case false: {
+      return <Login />;
     }
     default: {
       return false;
     }
   }
-};
+}
 
 export default Switch;

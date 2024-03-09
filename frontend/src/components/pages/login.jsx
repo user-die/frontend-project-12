@@ -1,26 +1,19 @@
-import { useTranslation } from 'react-i18next';
-import { ToastContainer, toast } from 'react-toastify';
-import Form from '../form';
-import logo from '../images/im1.jpeg';
-import 'react-toastify/dist/ReactToastify.css';
-import ChangeLanguage from '../changeLanguage';
+import { useTranslation } from "react-i18next";
+import { ToastContainer, toast } from "react-toastify";
+import Form from "../form";
+import logo from "../images/im1.jpeg";
+import "react-toastify/dist/ReactToastify.css";
+import Navbar from "../navbar";
 
 export default function Login() {
-  const { t } = useTranslation();
-  const serverError = () => toast.error(t('serverError'));
+  const { t } = useTranslation(),
+    serverError = () => toast.error(t("serverError"));
 
   return (
-    <section className="h-100">
-      <nav className="shadow-sm navbar navbar-expand-lg navbar-light bg-white">
-        <div className="container">
-          <a className="navbar-brand" href="/">
-            Chat Slack
-          </a>
-          <ChangeLanguage />
-        </div>
-      </nav>
+    <section className="d-flex flex-column h-100">
+      <Navbar />
       <ToastContainer />
-      <div className="container-fluid h-100 bg-light">
+      <div className="container-fluid h-100 bg-secondary-subtle">
         <div className="row justify-content-center align-content-center h-100">
           <div className="col-12 col-md-8 col-xxl-6">
             <div className="card shadow-sm">
@@ -32,8 +25,8 @@ export default function Login() {
               </div>
               <div className="card-footer p-4">
                 <div className="text-center">
-                  <span className="me-1">{t('no account?')}</span>
-                  <a href="/signup">{t('registration')}</a>
+                  <span className="me-1">{t("no account?")}</span>
+                  <a href="/signup">{t("registration")}</a>
                 </div>
               </div>
             </div>
