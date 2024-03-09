@@ -15,12 +15,12 @@ function Navbar(props) {
     [open, setOpen] = useState(),
     { i18n } = useTranslation();
 
-  function changeLanguageRu() {
+  function changeLanguage_ru() {
     i18n.changeLanguage("ru");
     setOpen(false);
   }
 
-  function changeLanguageEn() {
+  function changeLanguage_en() {
     i18n.changeLanguage("en");
     setOpen(false);
   }
@@ -73,7 +73,7 @@ function Navbar(props) {
               <button
                 type="button"
                 className="dropdown-item"
-                onClick={changeLanguageRu}
+                onClick={changeLanguage_ru}
               >
                 Русский &nbsp;
                 <img alt="" className="h-25 w-25" src={ru} />
@@ -81,7 +81,7 @@ function Navbar(props) {
               <button
                 type="button"
                 className="dropdown-item"
-                onClick={changeLanguageEn}
+                onClick={changeLanguage_en}
               >
                 English &nbsp; &nbsp;
                 <img alt="" className="h-25 w-25" src={en} />

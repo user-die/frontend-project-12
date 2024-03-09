@@ -2,7 +2,7 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://0.0.0.0:5001",
+  "proxy": "http://0.0.0.0:10000",
   "dependencies": {
     "@hexlet/chat-server": "^2.0.0",
     "@reduxjs/toolkit": "^2.2.1",
