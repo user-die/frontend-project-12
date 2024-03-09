@@ -21,28 +21,28 @@ import Navbar from "../navbar";
 const socket = io.connect();
 
 export default function Chat() {
-  const [modal, setModal]         = useState(false),
-        [modalType, setModalType] = useState(),
-        [channel, setChannel]     = useState({ name: "general", id: 1 }),
-        [id, setId]               = useState(),
-        [channelForRename, setChannelForRename] = useState();
+  const [modal, setModal] = useState(false),
+    [modalType, setModalType] = useState(),
+    [channel, setChannel] = useState({ name: "general", id: 1 }),
+    [id, setId] = useState(),
+    [channelForRename, setChannelForRename] = useState();
 
   const channels = useSelector((state) => state.channels.channels),
-        messages = useSelector((state) => state.messages.messages),
-        login = useSelector((state) => state.login),
-        dispatch = useDispatch(),
-        { t } = useTranslation(),
-        created = () => toast(t("channel created")),
-        renamed = () => toast(t("channel renamed")),
-        deleted = () => toast(t("channel deleted")),
-        serverError = () => toast.error(t("serverError"));
+    messages = useSelector((state) => state.messages.messages),
+    login = useSelector((state) => state.login),
+    dispatch = useDispatch(),
+    { t } = useTranslation(),
+    created = () => toast(t("channel created")),
+    renamed = () => toast(t("channel renamed")),
+    deleted = () => toast(t("channel deleted")),
+    serverError = () => toast.error(t("serverError"));
 
   // Эффекты
 
   useEffect(() => {
     const requestChannels = async () => {
       await axios
-        .get("/api/v1/channels", {
+        .get("http://0.0.0.0:10000/api/v1/channels", {
           headers: {
             Authorization: `Bearer ${localStorage.token}`,
           },
@@ -57,7 +57,7 @@ export default function Chat() {
 
     const requestMessages = async () => {
       await axios
-        .get("/api/v1/messages", {
+        .get("http://0.0.0.0:10000/api/v1/messages", {
           headers: {
             Authorization: `Bearer ${localStorage.token}`,
           },
@@ -167,9 +167,7 @@ export default function Chat() {
 
     setChannelForRename(e.target.previousSibling.textContent.slice(1));
 
-
-    if ( e.target.nextElementSibling.className === 'dropdown-menu show') {
-
+    if (e.target.nextElementSibling.className === "dropdown-menu show") {
       const elements = document.querySelectorAll(".show");
       elements.forEach((el) => (el.className = "dropdown-menu"));
       e.target.nextElementSibling.className = "dropdown-menu show";
@@ -293,7 +291,7 @@ export default function Chat() {
                               </button>
                               <button
                                 data-rr-ui-dropdown-item
-                                className="dropdown-item"                          
+                                className="dropdown-item"
                                 tabIndex="0"
                                 id={el.id}
                                 onClick={(e) => {
