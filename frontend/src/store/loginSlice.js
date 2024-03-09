@@ -25,10 +25,14 @@ const loginSlice = createSlice({
     toggleTheme: (state) => {
       state.theme = state.theme === "dark" ? "light" : "dark";
     },
+
+    setToken: (state, action) => {
+      state.token = action.payload
+    },
   },
 });
 
-export const { toggleLogin, setNickname, resetNickname, toggleTheme } =
+export const { toggleLogin, setNickname, resetNickname, toggleTheme, setToken } =
   loginSlice.actions;
 
 export default loginSlice.reducer;

@@ -2,7 +2,6 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
-import filter from "leo-profanity";
 import axios from "axios";
 import * as yup from "yup";
 import { useFormik } from "formik";
@@ -22,19 +21,21 @@ import Navbar from "../navbar";
 const socket = io.connect();
 
 export default function Chat() {
-  const [modal, setModal] = useState(false),
-    [modalType, setModalType] = useState(),
-    [channel, setChannel] = useState({ name: "general", id: 1 }),
-    [id, setId] = useState(),
-    channels = useSelector((state) => state.channels.channels),
-    messages = useSelector((state) => state.messages.messages),
-    login = useSelector((state) => state.login),
-    dispatch = useDispatch(),
-    { t } = useTranslation(),
-    created = () => toast(t("channel created")),
-    renamed = () => toast(t("channel renamed")),
-    deleted = () => toast(t("channel deleted")),
-    serverError = () => toast.error(t("serverError"));
+  const [modal, setModal]         = useState(false),
+        [modalType, setModalType] = useState(),
+        [channel, setChannel]     = useState({ name: "general", id: 1 }),
+        [id, setId]               = useState(),
+        [channelForRename, setChannelForRename] = useState();
+
+  const channels = useSelector((state) => state.channels.channels),
+        messages = useSelector((state) => state.messages.messages),
+        login = useSelector((state) => state.login),
+        dispatch = useDispatch(),
+        { t } = useTranslation(),
+        created = () => toast(t("channel created")),
+        renamed = () => toast(t("channel renamed")),
+        deleted = () => toast(t("channel deleted")),
+        serverError = () => toast.error(t("serverError"));
 
   // Эффекты
 
@@ -133,10 +134,10 @@ export default function Chat() {
   }
 
   function declinationOfMessage(n, textForms) {
-    if (n % 10 == 1 && n !== 11) {
+    if (n % 10 === 1 && n !== 11) {
       return textForms[2];
     } else if (
-      (n % 10 == 2 || n % 10 == 3 || n % 10 == 4) &&
+      (n % 10 === 2 || n % 10 === 3 || n % 10 === 4) &&
       n !== 12 &&
       n !== 13 &&
       n !== 14
@@ -163,6 +164,16 @@ export default function Chat() {
     e.target.nextElementSibling.className === "dropdown-menu"
       ? (e.target.nextElementSibling.className = "dropdown-menu show")
       : (e.target.nextElementSibling.className = "dropdown-menu");
+
+    setChannelForRename(e.target.previousSibling.textContent.slice(1));
+
+
+    if ( e.target.nextElementSibling.className === 'dropdown-menu show') {
+
+      const elements = document.querySelectorAll(".show");
+      elements.forEach((el) => (el.className = "dropdown-menu"));
+      e.target.nextElementSibling.className = "dropdown-menu show";
+    }
   }
 
   function closeModal() {
@@ -173,12 +184,26 @@ export default function Chat() {
     <div id="chat" className="h-100">
       <div className="d-flex flex-column h-100">
         <Navbar quite={quite} isChat={true} />
-        {modal && <Modal closeModal={closeModal} type={modalType} id={id} />}
+        {modal && (
+          <Modal
+            closeModal={closeModal}
+            type={modalType}
+            id={id}
+            channelForRename={channelForRename}
+            setChannelForRename={setChannelForRename}
+            created={created}
+            renamed={renamed}
+            deleted={deleted}
+          />
+        )}
         <ToastContainer />
 
         <div className="container-fluid h-100 bg-secondary-subtle">
           <div className="row align-items-center justify-content-center h-100">
-            <div className="card rounded-3 col-md-12 col-xxl-10" style={{ height: '85vh'}}>
+            <div
+              className="card rounded-3 col-md-12 col-xxl-10"
+              style={{ height: "85vh" }}
+            >
               <div className="row card-body h-100 flex-md-row">
                 <div className="col-4 col-md-2 border-end px-0 flex-column h-100 d-flex">
                   <div className="d-flex mt-1 justify-content-between mb-2 ps-4 pe-2 p-4">
@@ -250,38 +275,38 @@ export default function Chat() {
                                 transform: "translate(-8px, 40px)",
                               }}
                             >
-                              <a
+                              <button
                                 data-rr-ui-dropdown-item
                                 className="dropdown-item"
-                                role="button"
                                 tabIndex="0"
                                 id={el.id}
-                                href=""
                                 onClick={(e) => {
                                   e.preventDefault();
                                   setId(e.target.id);
                                   setModal(true);
                                   setModalType("remove");
+                                  e.target.parentNode.className =
+                                    "dropdown-menu";
                                 }}
                               >
                                 {t("remove")}
-                              </a>
-                              <a
+                              </button>
+                              <button
                                 data-rr-ui-dropdown-item
-                                className="dropdown-item"
-                                role="button"
+                                className="dropdown-item"                          
                                 tabIndex="0"
                                 id={el.id}
-                                href=""
                                 onClick={(e) => {
                                   e.preventDefault();
                                   setId(e.target.id);
                                   setModal(true);
                                   setModalType("rename");
+                                  e.target.parentNode.className =
+                                    "dropdown-menu";
                                 }}
                               >
                                 {t("rename")}
-                              </a>
+                              </button>
                             </div>
                           </div>
                         </li>
@@ -295,14 +320,14 @@ export default function Chat() {
                       {channel && messages && (
                         <span className="text-muted">
                           {
-                            messages.filter((el) => el.channelId == channel.id)
+                            messages.filter((el) => el.channelId === channel.id)
                               .length
                           }
                           &nbsp;
                           {t("message", {
                             context: declinationOfMessage(
                               messages.filter(
-                                (el) => el.channelId == channel.id
+                                (el) => el.channelId === channel.id
                               ).length,
                               ["sy", "s", false]
                             ),
@@ -316,7 +341,7 @@ export default function Chat() {
                     >
                       {messages &&
                         messages
-                          .filter((el) => el.channelId == channel.id)
+                          .filter((el) => el.channelId === channel.id)
                           .map((message) => (
                             <div key={message.id} className="text-break mb-2">
                               <b>{message.username}</b>:{message.body}

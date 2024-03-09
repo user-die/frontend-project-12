@@ -1,13 +1,13 @@
-import React, { useState } from "react"
-import { useTranslation } from "react-i18next"
-import { Sun, MoonStars } from "react-bootstrap-icons"
-import { useDispatch, useSelector } from "react-redux"
-import { toggleTheme } from "../store/loginSlice"
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Sun, MoonStars } from "react-bootstrap-icons";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleTheme } from "../store/loginSlice";
 
 import ru from "./images/ru.png";
 import en from "./images/en.png";
 
-function Navbar (props) {
+function Navbar(props) {
   const dispatch = useDispatch(),
     theme = useSelector((state) => state.login.theme),
     { quite, isChat } = props,
@@ -102,6 +102,6 @@ function Navbar (props) {
       </div>
     </nav>
   );
-};
+}
 
 export default Navbar;

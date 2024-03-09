@@ -5,8 +5,17 @@ import * as yup from "yup";
 import axios from "axios";
 import { useSelector } from "react-redux";
 
-function Modal (props) {
-  const { type, closeModal, id } = props,
+function Modal(props) {
+  const {
+      type,
+      closeModal,
+      id,
+      channelForRename,
+      setChannelForRename,
+      created,
+      renamed,
+      deleted,
+    } = props,
     { t } = useTranslation(),
     channels = useSelector((state) => state.channels.channels);
 
@@ -14,6 +23,7 @@ function Modal (props) {
     add: {
       title: t("add сhannel"),
       button: t("submit"),
+      notify: () => created(),
       func: (name) =>
         axios.post(
           "/api/v1/channels",
@@ -29,6 +39,7 @@ function Modal (props) {
     rename: {
       title: t("rename сhannel"),
       button: t("submit"),
+      notify: () => renamed(),
       func: (name) =>
         axios.patch(
           `/api/v1/channels/${id}`,
@@ -44,6 +55,7 @@ function Modal (props) {
     remove: {
       title: t("remove channel"),
       button: t("remove"),
+      notify: () => deleted(),
       func: () =>
         axios.delete(`/api/v1/channels/${id}`, {
           headers: {
@@ -55,18 +67,20 @@ function Modal (props) {
 
   const formikForChannel = useFormik({
     initialValues: {
-      channelName: "",
+      channelName: channelForRename,
     },
     onSubmit: (values, { resetForm }) => {
       config[type].func(values.channelName);
       closeModal();
+      setChannelForRename("");
       resetForm();
+      config[type].notify();
     },
     validationSchema: yup.object().shape({
       channelName: yup
         .string()
-        //.min(3, t("min3ChannelName"))
-        //.required(t("required"))
+        .min(3, t("min3ChannelName"))
+        .required(t("required"))
         .notOneOf(
           channels.map((el) => el.name),
           t("channel already")
@@ -95,27 +109,10 @@ function Modal (props) {
             />
           </div>
           <div className="modal-body">
-            <form onSubmit={formikForChannel.handleSubmit}>
-              <div>
-                {type === "remove" ? (
-                  <div>Уверены?</div>
-                ) : (
-                  <input
-                    name="channelName"
-                    id="name"
-                    className="mb-2 form-control"
-                    placeholder="Введите название канала"
-                    onChange={formikForChannel.handleChange}
-                    value={formikForChannel.values.channelName}
-                  />
-                )}
-
-                {formikForChannel.errors.channelName && (
-                  <div className="text-danger">
-                    {formikForChannel.errors.channelName}
-                  </div>
-                )}
-                <div className="d-flex justify-content-end">
+            {type === "remove" ? (
+              <div className="d-flex flex-column">
+                <p>Уверены ?</p>
+                <div className="align-self-end">
                   <button
                     type="button"
                     className="me-2 btn btn-secondary"
@@ -128,17 +125,61 @@ function Modal (props) {
                     className={
                       type === "remove" ? "btn btn-danger" : "btn btn-primary"
                     }
+                    onClick={() => {
+                      config[type].func();
+                      closeModal();
+                      config[type].notify();
+                    }}
                   >
                     {config[type].button}
                   </button>
                 </div>
               </div>
-            </form>
+            ) : (
+              <form onSubmit={formikForChannel.handleSubmit}>
+                <div>
+                  <input
+                    name="channelName"
+                    id="name"
+                    className="mb-2 form-control"
+                    placeholder="Введите название канала"
+                    onChange={formikForChannel.handleChange}
+                    value={formikForChannel.values.channelName}
+                  />
+
+                  {formikForChannel.errors.channelName && (
+                    <div className="text-danger">
+                      {formikForChannel.errors.channelName}
+                    </div>
+                  )}
+                  <div className="d-flex justify-content-end">
+                    <button
+                      type="button"
+                      className="me-2 btn btn-secondary"
+                      onClick={() => {
+                        closeModal();
+                        setChannelForRename("");
+                      }}
+                    >
+                      {t("cancel")}
+                    </button>
+                    <button
+                      type="submit"
+                      className={
+                        type === "remove" ? "btn btn-danger" : "btn btn-primary"
+                      }
+                    >
+                      {config[type].button}
+                    </button>
+                  </div>
+                </div>
+              </form>
+            )}
           </div>
         </div>
       </div>
     </div>
   );
-};
+}
 
 export default Modal;

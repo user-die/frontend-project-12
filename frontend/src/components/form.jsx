@@ -3,7 +3,7 @@ import * as yup from "yup";
 import { useFormik } from "formik";
 import axios from "axios";
 import { useState } from "react";
-import { toggleLogin, setNickname } from "../store/loginSlice";
+import { toggleLogin, setNickname, setToken } from "../store/loginSlice";
 import { useDispatch } from "react-redux";
 
 function Form(props) {
@@ -25,7 +25,7 @@ function Form(props) {
         })
         .then((response) => {
           if (response.status === 200) {
-            localStorage.setItem("token", response.data.token);
+            dispatch(setToken(response.data.token));
             dispatch(toggleLogin());
             dispatch(setNickname(response.data.username));
           }

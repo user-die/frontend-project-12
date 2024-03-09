@@ -94,6 +94,7 @@ export default function Registration() {
                     <div className="form-floating mb-3">
                       <input
                         name="password"
+                        type="password"
                         placeholder={t("password")}
                         required
                         autoComplete="password"
@@ -118,6 +119,7 @@ export default function Registration() {
                     <div className="form-floating mb-4">
                       <input
                         name="confirmPassword"
+                        type="password"
                         placeholder={t("confirmPassword")}
                         required
                         autoComplete="confirmPassword"
