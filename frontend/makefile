@@ -1,11 +1,9 @@
-install:
-	npm ci
-
-start:
+start-frontend:
 	npm start
 
-build:
-	npm build
+start-backend:
+	npx start-server
 
-lint:
-	npx eslint --ext js,jsx --no-eslintrc --config .eslintrc.yml .
+start:
+	make start-frontend & make start-backend
+

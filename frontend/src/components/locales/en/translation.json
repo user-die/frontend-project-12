@@ -1,0 +1,50 @@
+{
+  "login": "login",
+  "yourNick": "your nickname",
+  "password": "password",
+  "no account?": "don't you have account?",
+  "registration": "registration",
+  "serverError": "the server is not responding",
+
+  "username": "username",
+  "confirmPassword": "confirm password",
+  "signup": "signup",
+
+  "log out": "log out",
+  "channels": "channels",
+  "enter a message": "enter a message...",
+  "add сhannel": "add сhannel",
+  "cancel": "cancel",
+  "submit": "submit",
+  "rename": "rename",
+  "rename сhannel": "rename сhannel",
+  "remove": "remove",
+  "remove channel": "remove channel",
+  "sure?": "sure?",
+
+  "message": "message",
+  "message_s": "messages",
+  "message_sy": "messages",
+
+  "page not found": "page not found",
+  "But you can go": "But you can go",
+  "the main page": "the main page",
+
+  "required nickname": "nickname is a required field",
+  "required password": "password is a required field",
+  "invalid": "invalid nickname or password",
+  "min3Username": "username must be at least 3 characters",
+  "max20Username": "username must be at most 20 characters",
+  "min6Password": "password must be at least 6 characters",
+  "max20Password": "password must be at most 20 characters",
+  "match": "passwords must match",
+  "consist": "The password must consist of Latin or Cyrillic characters and contain numbers",
+  "already": "A user with the same name already exists",
+  "min3ChannelName": "channel name must contain at least 3 characters",
+  "channel already": "a channel with that name already exists",
+  "required": "required field",
+
+  "channel created": "channel created",
+  "channel renamed": "channel renamed",
+  "channel deleted": "channel deleted"
+}
