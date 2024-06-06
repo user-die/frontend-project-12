@@ -4,25 +4,24 @@ import {
   Modal, FormGroup, Form, Button,
 } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
 
+import notification from '../Toast/index.js';
+import useApi from '../../hooks/useApi';
 import { getActiveChannelId } from '../../slices/selectors';
-
-import routes from '../../routes';
-import getAuthHeader from '../../utilities/getAuthHeader';
-import notification from '../toast';
 
 const RemoveModal = ({ isOpen, close }) => {
   const [disabledSumbitBtn, setDisabledSubmitBtn] = useState(false);
-  const channelId = useSelector(getActiveChannelId);
+  const activeChannelId = useSelector(getActiveChannelId);
 
+  const api = useApi();
   const { t } = useTranslation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setDisabledSubmitBtn(true);
+
     try {
-      setDisabledSubmitBtn(true);
-      await axios.delete(routes.idChannelPath(channelId), { headers: getAuthHeader() });
+      await api.removeChannel(activeChannelId);
       notification.successToast(t('toast.channelRemove'));
       close();
     } catch (err) {
@@ -39,15 +38,31 @@ const RemoveModal = ({ isOpen, close }) => {
 
       <Modal.Body>
         <Form onSubmit={handleSubmit}>
+
           <FormGroup>
             <p className="lead">{t('modals.removeBody')}</p>
           </FormGroup>
+
           <div className="d-flex justify-content-end">
-            <Button onClick={close} type="button" className="btn-secondary mt-2 me-2">{t('buttons.channels.back')}</Button>
-            <Button disabled={disabledSumbitBtn} type="submit" className="btn-danger mt-2">{t('buttons.channels.remove')}</Button>
+            <Button
+              className="btn-secondary mt-2 me-2"
+              type="button"
+              onClick={close}
+            >
+              {t('buttons.channels.back')}
+            </Button>
+            <Button
+              className="btn-danger mt-2"
+              type="submit"
+              disabled={disabledSumbitBtn}
+            >
+              {t('buttons.channels.remove')}
+            </Button>
           </div>
+
         </Form>
       </Modal.Body>
+
     </Modal>
   );
 };

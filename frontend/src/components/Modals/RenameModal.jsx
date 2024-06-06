@@ -4,21 +4,19 @@ import { useFormik } from 'formik';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 
-import axios from 'axios';
 import * as yup from 'yup';
 
-import routes from '../../routes.js';
-import getAuthHeader from '../../utilities/getAuthHeader.js';
-import notification from '../toast/index.js';
-
+import notification from '../Toast/index.js';
+import useApi from '../../hooks/useApi';
 import { channelsSelectors } from '../../slices/channelSlice';
 
 const RenameModal = ({ isOpen, close }) => {
   const channels = useSelector(channelsSelectors.selectAll);
   const channelsName = channels.map((channel) => channel.name);
-  const id = useSelector((state) => state.channels.activeChannelId);
-  const { name } = useSelector((state) => channelsSelectors.selectById(state, id));
+  const { activeChannelId } = useSelector((state) => state.channels);
+  const { name } = useSelector((state) => channelsSelectors.selectById(state, activeChannelId));
 
+  const api = useApi();
   const { t } = useTranslation();
 
   const inputElem = useRef(null);
@@ -41,11 +39,10 @@ const RenameModal = ({ isOpen, close }) => {
     },
     onSubmit: async (values) => {
       try {
-        await axios.patch(routes.idChannelPath(id), values, { headers: getAuthHeader() });
+        await api.renameChannel(activeChannelId, values);
         notification.successToast(t('toast.channelRename'));
         close();
       } catch (err) {
-        console.log(err);
         notification.errorNotify(t('errors.network'));
       }
     },
@@ -59,6 +56,7 @@ const RenameModal = ({ isOpen, close }) => {
 
       <Modal.Body>
         <Form onSubmit={formik.handleSubmit}>
+
           <Form.Floating className="mb-3">
             <Form.Control
               name="name"
@@ -75,12 +73,27 @@ const RenameModal = ({ isOpen, close }) => {
             <label htmlFor="name">{t('modals.channelName')}</label>
             <div className="invalid-tooltip">{formik.errors.name}</div>
           </Form.Floating>
+
           <div className="d-flex justify-content-end">
-            <Button onClick={close} type="button" className="btn-secondary mt-2 me-2">{t('buttons.channels.back')}</Button>
-            <Button disabled={formik.isSubmitting} type="submit" className="btn-primary mt-2">{t('buttons.channels.send')}</Button>
+            <Button
+              className="btn-secondary mt-2 me-2"
+              type="button"
+              onClick={close}
+            >
+              {t('buttons.channels.back')}
+            </Button>
+            <Button
+              className="btn-primary mt-2"
+              type="submit"
+              disabled={formik.isSubmitting}
+            >
+              {t('buttons.channels.send')}
+            </Button>
           </div>
+
         </Form>
       </Modal.Body>
+
     </Modal>
   );
 };

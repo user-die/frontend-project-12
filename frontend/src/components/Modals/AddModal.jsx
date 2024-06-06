@@ -6,18 +6,17 @@ import { useTranslation } from 'react-i18next';
 
 import * as yup from 'yup';
 import filter from 'leo-profanity';
-import axios from 'axios';
 
-import routes from '../../routes.js';
-import notification from '../toast/index.js';
-import getAuthHeader from '../../utilities/getAuthHeader.js';
-
-import { changeChannel, channelsSelectors } from '../../slices/channelSlice.js';
+import useApi from '../../hooks/useApi';
+import notification from '../Toast/index.js';
+import { channelsSelectors, changeChannel } from '../../slices/channelSlice.js';
 
 const AddModal = ({ isOpen, close }) => {
   const channels = useSelector(channelsSelectors.selectAll);
   const channelsName = channels.map((channel) => channel.name);
+
   const dispatch = useDispatch();
+  const api = useApi();
 
   const { t } = useTranslation();
 
@@ -40,16 +39,14 @@ const AddModal = ({ isOpen, close }) => {
       name: '',
     },
     onSubmit: async ({ name }) => {
-      const filteredChannelName = filter.clean(name);
+      const channel = { name: filter.clean(name) };
 
       try {
-        // eslint-disable-next-line max-len
-        const res = await axios.post(routes.channelsPath(), { name: filteredChannelName }, { headers: getAuthHeader() });
-        dispatch(changeChannel(res.data));
+        const data = await api.createChannel(channel);
+        dispatch(changeChannel(data));
         notification.successToast(t('toast.channelAdd'));
         close();
       } catch (err) {
-        console.log(err);
         notification.errorNotify(t('errors.network'));
       }
     },
@@ -63,6 +60,7 @@ const AddModal = ({ isOpen, close }) => {
 
       <Modal.Body>
         <Form onSubmit={formik.handleSubmit}>
+
           <Form.Floating className="mb-3">
             <Form.Control
               name="name"
@@ -78,12 +76,27 @@ const AddModal = ({ isOpen, close }) => {
             <label htmlFor="name">{t('modals.channelName')}</label>
             <div className="invalid-tooltip">{formik.errors.name}</div>
           </Form.Floating>
+
           <div className="d-flex justify-content-end mt-3">
-            <Button onClick={close} type="button" className="btn-secondary mt-2 me-2">{t('buttons.channels.back')}</Button>
-            <Button disabled={formik.isSubmitting} type="submit" className="btn-primary mt-2">{t('buttons.channels.send')}</Button>
+            <Button
+              className="btn-secondary mt-2 me-2"
+              onClick={close}
+              type="button"
+            >
+              {t('buttons.channels.back')}
+            </Button>
+            <Button
+              className="btn-primary mt-2"
+              type="submit"
+              disabled={formik.isSubmitting}
+            >
+              {t('buttons.channels.send')}
+            </Button>
           </div>
+
         </Form>
       </Modal.Body>
+
     </Modal>
   );
 };

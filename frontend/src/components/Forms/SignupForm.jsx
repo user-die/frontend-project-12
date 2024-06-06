@@ -5,10 +5,10 @@ import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
 
-import axios from 'axios';
 import * as yup from 'yup';
 
 import routes from '../../routes';
+import useApi from '../../hooks/useApi';
 import { setCredentials } from '../../slices/userSlice';
 
 const SignupForm = () => {
@@ -16,6 +16,7 @@ const SignupForm = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const api = useApi();
 
   const { t } = useTranslation();
 
@@ -49,12 +50,10 @@ const SignupForm = () => {
       setValidated(false);
 
       try {
-        const res = await axios.post(routes.signupPath(), values);
-        dispatch(setCredentials(res.data));
-        localStorage.setItem('userId', JSON.stringify(res.data));
-        navigate('/');
-      } catch (e) {
-        console.log(e);
+        const res = await api.signupUser(values);
+        dispatch(setCredentials(res));
+        navigate(routes.chatPage());
+      } catch (err) {
         setValidated(true);
       }
     },
@@ -63,6 +62,7 @@ const SignupForm = () => {
   return (
     <Form onSubmit={formik.handleSubmit} className="col-12 col-md-6 mt-3 mt-mb-0">
       <h1 className="text-center mb-4">{t('signUpForm.title')}</h1>
+
       <Form.Floating className="mb-3">
         <Form.Control
           name="username"
@@ -82,7 +82,6 @@ const SignupForm = () => {
         <Form.Control
           name="password"
           id="password"
-          required
           type="password"
           placeholder={t('signUpForm.password')}
           value={formik.values.password}
@@ -104,12 +103,20 @@ const SignupForm = () => {
           isInvalid={(formik.errors.confirmPassword && formik.touched.confirmPassword) || validated}
         />
         <Form.Label htmlFor="confirmPassword">{t('signUpForm.confirmPassword')}</Form.Label>
+
         {formik.errors.confirmPassword && formik.touched.confirmPassword
           ? (<Form.Control.Feedback type="invalid" tooltip>{formik.errors.confirmPassword}</Form.Control.Feedback>)
           : (<Form.Control.Feedback type="invalid" tooltip>{t('errors.usernameRegistration')}</Form.Control.Feedback>)}
       </Form.Floating>
 
-      <Button disabled={formik.isSubmitting} variant="outline-primary" type="submit" className="w-100 mb-3">{t('signUpForm.signUp')}</Button>
+      <Button
+        className="w-100 mb-3"
+        variant="outline-primary"
+        type="submit"
+        disabled={formik.isSubmitting}
+      >
+        {t('signUpForm.signUp')}
+      </Button>
     </Form>
   );
 };

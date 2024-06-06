@@ -5,7 +5,7 @@ import {
 } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 
-import LoginForm from '../../components/forms/LoginForm';
+import LoginForm from '../../components/Forms/LoginForm';
 import image from '../../assets/loginimage.jpg';
 import routes from '../../routes';
 
@@ -17,6 +17,7 @@ const LoginPage = () => {
       <Row className="justify-content-center align-content-center h-100">
         <Col className="col-12 col-md-8 col-xxl-6">
           <Card className="shadow-sm">
+
             <Card.Body className="d-flex flex-column flex-md-row justify-content-around align-items-center p-5">
               <Image
                 src={image}
@@ -25,6 +26,7 @@ const LoginPage = () => {
               />
               <LoginForm />
             </Card.Body>
+
             <Card.Footer className="p-4">
               <div className="text-center">
                 <span>
@@ -35,6 +37,7 @@ const LoginPage = () => {
                 </Link>
               </div>
             </Card.Footer>
+
           </Card>
         </Col>
       </Row>

@@ -8,8 +8,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-toastify/dist/ReactToastify.css';
 
 import AppRoutes from './AppRoutes.jsx';
-import Modal from './components/modals/Modal.jsx';
-import Toast from './components/toast/Toast.jsx';
+import Modal from './components/Modals/Modal.jsx';
+import Toast from './components/Toast/Toast.jsx';
 
 import initI18next from './initI18next.js';
 import store from './slices/store.js';
@@ -17,6 +17,7 @@ import { addMessage } from './slices/messageSlice';
 import {
   removeChannel, changeChannel, addChannel, updateChannel,
 } from './slices/channelSlice.js';
+import ApiProvider from './context/ApiProvider.jsx';
 
 const rollbarConfig = {
   accessToken: 'POST_CLIENT_ITEM_ACCESS_TOKEN',
@@ -51,9 +52,11 @@ const init = async () => {
       <ErrorBoundary>
         <Provider store={store}>
           <I18nextProvider i18n={i18Instance}>
-            <AppRoutes />
-            <Toast />
-            <Modal />
+            <ApiProvider>
+              <AppRoutes />
+              <Toast />
+              <Modal />
+            </ApiProvider>
           </I18nextProvider>
         </Provider>
       </ErrorBoundary>
