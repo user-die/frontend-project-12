@@ -3,7 +3,7 @@ import {
   Row, Container, Col, Card, Image,
 } from 'react-bootstrap';
 
-import SignupForm from '../../components/Forms/SignupForm';
+import SignupForm from '../../components/forms/SignupForm';
 import image from '../../assets/signupimage.jpg';
 
 const SignupPage = () => (

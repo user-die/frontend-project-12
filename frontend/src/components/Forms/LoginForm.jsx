@@ -5,8 +5,9 @@ import { Button, Form } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { useFormik } from 'formik';
 
+import axios from 'axios';
+
 import routes from '../../routes';
-import useApi from '../../hooks/useApi';
 import { setCredentials } from '../../slices/userSlice';
 
 const LoginForm = () => {
@@ -15,8 +16,6 @@ const LoginForm = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const api = useApi();
-
   const location = useLocation();
   const path = location.state === null ? routes.chatPage() : location.state.from;
 
@@ -36,8 +35,9 @@ const LoginForm = () => {
       setIsInvalid(false);
 
       try {
-        const res = await api.loginUser(values);
-        dispatch(setCredentials(res));
+        const res = await axios.post(routes.loginPath(), values);
+        localStorage.setItem('userId', JSON.stringify(res.data));
+        dispatch(setCredentials(res.data));
         navigate(path);
       } catch (err) {
         setIsInvalid(true);
@@ -45,7 +45,8 @@ const LoginForm = () => {
 
         if (responseStatus === 401) {
           setErrorMessage(t('errors.login'));
-        } else {
+        }
+        if (responseStatus === 409) {
           setErrorMessage(t('errors.network'));
         }
       }
@@ -62,7 +63,6 @@ const LoginForm = () => {
           id="username"
           required
           type="text"
-          autoComplete="username"
           placeholder={t('loginForm.username')}
           value={formik.values.username}
           onChange={formik.handleChange}
@@ -78,7 +78,6 @@ const LoginForm = () => {
           id="password"
           required
           type="password"
-          autoComplete="current-password"
           placeholder={t('loginForm.password')}
           value={formik.values.password}
           onChange={formik.handleChange}
@@ -88,14 +87,7 @@ const LoginForm = () => {
         <div className="invalid-tooltip">{errorMessage}</div>
       </Form.Floating>
 
-      <Button
-        className="w-100 mb-3"
-        variant="outline-primary"
-        type="submit"
-        disabled={formik.isSubmitting}
-      >
-        {t('loginForm.title')}
-      </Button>
+      <Button disabled={formik.isSubmitting} variant="outline-primary" type="submit" className="w-100 mb-3">{t('loginForm.title')}</Button>
     </Form>
   );
 };

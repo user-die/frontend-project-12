@@ -36,10 +36,7 @@ const messagesSlice = createSlice({
       .addCase(fetchMessages.pending, (state) => {
         state.status = 'pending';
       })
-      .addCase(fetchMessages.fulfilled, (state, action) => {
-        messagesAdapter.setAll(state, action.payload);
-        state.status = 'loaded';
-      })
+      .addCase(fetchMessages.fulfilled, messagesAdapter.addMany)
       .addCase(fetchMessages.rejected, (state, action) => {
         state.status = 'error';
         state.error = action.error;
