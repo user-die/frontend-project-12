@@ -1,6 +1,6 @@
-import { useSelector } from "react-redux";
-import Chat from "./pages/chat";
-import Login from "./pages/login";
+import { useSelector } from 'react-redux';
+import Chat from './pages/chat';
+import Login from './pages/login';
 
 function Switch() {
   const login = useSelector((state) => state.login.login);

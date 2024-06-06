@@ -1,10 +1,10 @@
-import { configureStore, combineReducers } from "@reduxjs/toolkit";
-import { persistStore, persistReducer } from "redux-persist";
-import storage from "redux-persist/lib/storage";
+import { configureStore, combineReducers } from '@reduxjs/toolkit';
+import { persistStore, persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
 
-import channelsReducer from "./channelsSlice";
-import messagesReducer from "./messageSlice";
-import loginReducer from "./loginSlice";
+import channelsReducer from './channelsSlice';
+import messagesReducer from './messageSlice';
+import loginReducer from './loginSlice';
 
 const rootReducer = combineReducers({
   channels: channelsReducer,
@@ -13,7 +13,7 @@ const rootReducer = combineReducers({
 });
 
 const persistConfig = {
-  key: "root",
+  key: 'root',
   storage,
 };
 

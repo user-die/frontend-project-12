@@ -1,13 +1,13 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const loginSlice = createSlice({
-  name: "messages",
+  name: 'messages',
   initialState: {
     login: false,
-    nickname: "",
-    token: "",
-    theme: "",
-    lng: "ru",
+    nickname: '',
+    token: '',
+    theme: '',
+    lng: 'ru',
   },
   reducers: {
     toggleLogin: (state) => {
@@ -19,11 +19,11 @@ const loginSlice = createSlice({
     },
 
     resetNickname: (state) => {
-      state.nickname = "";
+      state.nickname = '';
     },
 
     toggleTheme: (state) => {
-      state.theme = state.theme === "dark" ? "light" : "dark";
+      state.theme = state.theme === 'dark' ? 'light' : 'dark';
     },
 
     setToken: (state, action) => {

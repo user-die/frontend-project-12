@@ -13,5 +13,12 @@
   "license": "ISC",
   "dependencies": {
     "@hexlet/chat-server": "^2.0.2"
+  },
+  "devDependencies": {
+    "@eslint/compat": "^1.0.3",
+    "@eslint/js": "^9.4.0",
+    "eslint": "^9.4.0",
+    "eslint-plugin-react": "^7.34.2",
+    "globals": "^15.3.0"
   }
 }
